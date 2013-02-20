@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Sample Parallel Coordinates Chart</title>
+
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+
+		<script type="text/javascript" src="../..//libs/sap.viz.ext.pa.pc.js"></script>      
+
+		<script type="text/javascript">
+
+		  $(function() {
+
+				var Environment = sap.viz.env;
+
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+
+				var vizcore = sap.viz.core;
+
+
+
+				Environment.initialize({
+
+					'log' : 'debug'
+
+				});
+
+
+
+				var chartOption = {
+
+					title : {
+
+					  visible : true,
+
+						text : 'Sample Parallel Coordinates Chart'
+
+					},
+                    plotArea :{
+                        colorPalette : d3.scale.category20().range().concat(d3.scale.category20b().range()).concat(d3.scale.category20c().range())     // colors is an array of colours.
+                    }
+
+				};
+
+				
+
+
+
+				var ds = new CrosstableDataset();	
+
+				ds.setData({
+
+		            'analysisAxis': [{
+
+		                'index': 1,
+
+		                'data': [{
+
+		                    'type': 'Dimension',
+
+		                    'name': 'Sample',
+
+		                    'values': ['1', '2', '3', '4', '5']
+
+		                }]
+
+		            } , {
+
+		                'index': 2,
+
+		                'data': [{
+
+		                    'type': 'Dimension',
+
+		                    'name': 'Species',
+
+		                    'values': ['setosa', 'versicolor', 'virginica']
+
+		                }]
+
+		            }],
+
+		            'measureValuesGroup': [{
+
+		                'index': 1,
+
+		                'data': [{
+
+		                    'type': 'Measure',
+
+		                    'name': 'sepal length',
+
+		                    'values': [[5.1, 4.9, 4.7, 4.6, 5], [7, 6.4, 6.9, 5.5, 6.5], [6.3, 5.8, 7.1, 6.3, 6.5]]
+
+		                }, {
+
+		                    'type': 'Measure',
+
+		                    'name': 'sepal width',
+
+		                    'values': [[3.1, 8.9, 2.7, 6.6, 5], [5, 6.6, 6.9, 7.5, 2.5], [2.3, 5.8, 8.1, 1.3, 2.5]]
+
+		                }, {
+
+		                    'type': 'Measure',
+
+		                    'name': 'petal length',
+
+		                    'values': [[5.1, 4.9, 4.7, 4.6, 5], [7, 6.4, 6.9, 5.5, 6.5], [6.3, 5.8, 7.1, 6.3, 6.5]]
+
+		                }, {
+
+		                    'type': 'Measure',
+
+		                    'name': 'petal width',
+
+		                    'values': [[3.1, 2.9, 1.7, 4.2, 1], [6, 3.4, 2.9, 1.5, 2.5], [3.3, 2.8, 8.1, 6.3, 8.5]]
+
+		                }]
+
+		            }]
+
+		        });
+
+				var chart = vizcore.createViz({
+
+					type : 'viz/ext/pa/pc',
+
+					data : ds,
+
+					container : $('#chart'),
+
+					options : chartOption
+
+				});				
+
+				
+
+    
+
+   	 		});
+
+	</script>
+
+	<style type="text/css">		
+
+		.brush .extent {
+
+		    fill-opacity: .3;
+
+		    stroke: #fff;
+
+		    shape-rendering: crispEdges;
+
+		}
+
+		.axis line, .axis path {
+
+		    fill: none;
+
+		    stroke: #000;
+
+		    shape-rendering: crispEdges;
+
+		}
+
+		.axis text {
+
+		    text-shadow: 0 1px 0 #fff;
+
+		    cursor: move;
+
+		}		
+
+       </style>
+
+	</head>
+
+	<body>
+
+		<div id="chart" style="width: 800px; height: 300px; background-color: #ffffff"></div>
+
+	</body>
+
+</html>
+

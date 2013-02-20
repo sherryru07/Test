@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Geo Bubble Chart</title>
+        <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+        <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+        <script type="text/javascript" src="../../../../libs/json2.js"></script>
+        <script type="text/javascript" src="../../../../libs/rtree.js"></script>
+        <script type="text/javascript" src="../../../../libs/simplify.js"></script>
+        <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        <script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+    </head>
+    <body>
+        <div id="chart" style="position:absolute; left: 50px; width: 90%; height: 90%; background-color: #ffffff"></div>
+        <!-- 
+        <div id="chart2" style="position:absolute; left: 50px; top: 650px;  width: 600px; height: 400px; background-color: #ffffff"></div>
+         -->
+        <script type='text/javascript'>
+            $(function() {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+                sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+                sap.viz.GeoManager.detailMapEnabled(true);
+
+                Environment.initialize({
+                    'log' : 'debug'
+                });
+
+                var chartOption = {
+                    bubble : {
+                        //'colorPalette' : d3.scale.category20().range()
+                    },
+                    title : {
+                      visible : true,
+                        text : 'Sample Geo Bubble Chart Title - Size Legend'
+                    },
+                    legend : {
+                        isHierarchy : false,
+                        position : 'right',
+                        type : 'SizeLegend'  //BubbleColorLegend
+                    }
+                };
+
+                chartOption = {
+                    bubble : {
+                        selectionMode : 'multi',
+                        tooltipEnabled : true
+                    },
+                    title : {
+                        // visible: true,
+                        text : 'Geo Bubble Chart Sample'
+                    },
+                    legend : {
+                        isHierarchy : false,
+                        position : 'right',
+                        legendType : 'BubbleColorLegend'  //BubbleColorLegend
+                    }
+                };
+
+        
+
+                var ds = new CrosstableDataset();
+                var values = [ 'Colorado',
+                                'California',
+                                'New York',
+                                'Texas',
+                                'District of Columbia',
+                                'Massachusetts',
+                                'Illinois',
+                                'Florida',
+                                'Montana'
+                                ];
+                var infos = [ { featureId: '21017065,NAVTEQ' },
+                                { featureId: '21009408,NAVTEQ' },
+                                { featureId: '21010819,NAVTEQ' },
+                                { featureId: '21015214,NAVTEQ' },
+                                { featureId: '21022302,NAVTEQ' },
+                                { featureId: '21014299,NAVTEQ' },
+                                { featureId: '21002247,NAVTEQ' },
+                                { featureId: '21023288,NAVTEQ' },
+                                { featureId: '21014052,NAVTEQ' }
+                                ];
+
+                /*
+                    Geo data
+                    MG 1: feature id
+                    MG 2: size
+                    AA 1: (future) color
+                    AA 2: (future) shape
+                */
+                ds.setData({
+                  
+                      'analysisAxis':[{
+                        'index' : 1,
+                        'data' : [{
+                            'type' : 'Dimension',
+                            'name' : 'State',
+                            'values' : values,
+                            'infos' : infos
+                        }]
+                    }],  
+                   'measureValuesGroup':[ {
+                      'index' : 1,
+                      'data' : [{
+                          'type' : 'Measure',
+                          'name' : 'Number of Planes',
+                          'values' : [[18, 98, 30, 46, 100, 103, 102, 150, 73, 100, 97, 20, 119, 30, 129, 60, 30, 98, 19].slice(0,values.length)]
+                      }]
+                  }]});
+                
+                vizcore.createViz({
+                    type : 'viz/geobubble',
+                    data : ds,
+                    container : $('#chart'),
+                    options : chartOption
+                });
+            });
+
+        </script>
+    </body>
+</html>

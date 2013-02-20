@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<link rel="stylesheet" href="lib/qunit.css">
+<title>Viz Stacked Waterfall Chart</title>
+<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+<script type="text/javascript" src="../../../../libs/json2.js"></script>
+<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+</head>
+<body>
+	<div id="chart"
+		style="width: 600px; height: 400px; background-color: #ffffff"></div>
+	<div id="qunit"></div>
+	<script src="lib/qunit.js"></script>
+
+	<script type='text/javascript'>
+	sap.viz.TemplateManager.loadPath=["../../../../resources/templates/"];
+    var CrosstableDataset = sap.viz.data.CrosstableDataset;
+    var vizcore = sap.viz.core;
+    var timer = 1500;
+    var chartOption = {
+      title : {
+        visible : true,
+        text : 'Stacked Waterfall Chart'
+      }
+    };
+    var stackedwaterfall;
+    module("Basic Chart");
+
+    test("stacked waterfall chart", function() {
+      ok(true, "OK");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      cleanChart();
+      createChart(ds);
+    });
+
+    asyncTest("horizontal stacked waterfall chart.", function() {
+      ok(true, "OK");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        cleanChart();
+        createChart(ds, "horizontal_stacked_waterfall");
+      }, timer);
+    });
+    
+    module("Different Dataset");
+    asyncTest("with some null in a group", function() {
+      ok(true, "OK");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ null, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        cleanChart();
+        createChart(ds);
+      }, timer);
+    });
+
+    asyncTest("with all value is null in a group", function() {
+      ok(true, "OK");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe', 'Africa' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ null, 10, -40 ], [ null, -20, 50 ],
+                [ null, 20, -10 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        cleanChart();
+        createChart(ds);
+      }, timer);
+    });
+
+    asyncTest("with small value", function() {
+      ok(true, "OK");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 0.000304999994114041, -0.00000799999997980194, 0.0000090000003183377],
+                         [ -0.0000609999988228083, 0.000101999998150859, 0.000001999998150859] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        cleanChart();
+        createChart(ds);
+      }, timer);
+    });
+    
+    module("Resize");
+    asyncTest("with small size", function() {
+      ok(true, "with small size.");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        cleanChart();
+        createChart(ds);
+      }, timer);
+      
+      setTimeout(function() {
+        start();
+        stackedwaterfall.size({width: 400, height : 200});
+      }, timer);
+    });
+    
+    asyncTest("back to origin size", function() {
+      ok(true, "back to origin size.");
+      setTimeout(function() {
+        start();
+        stackedwaterfall.size({width: 600, height : 400});
+      }, timer);
+    });
+    
+    module("Update Dataset", {
+      setup : function(){
+        if(stackedwaterfall===undefined){
+          //create new chart.
+          var ds = new CrosstableDataset();
+          ds.setData({
+            'analysisAxis' : [ {
+              'index' : 1,
+              'data' : [ {
+                'type' : 'Dimension',
+                'name' : 'Country',
+                'values' : [ 'C1', 'C2', 'C3' ]
+              } ]
+            }, {
+              'index' : 2,
+              'data' : [ {
+                'type' : 'Dimension',
+                'name' : 'Region',
+                'values' : [ 'Asia', 'Europe' ]
+              } ]
+            } ],
+            'measureValuesGroup' : [ {
+              'index' : 1,
+              'data' : [ {
+                'type' : 'Measure',
+                'name' : 'Profit',
+                'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+              } ]
+            } ]
+          });
+          createChart(ds);
+        }
+      }  
+    });
+    
+    asyncTest("dataset structure changed", function() {
+      ok(true, "update dataset 1. dataset structure changed. redraw it.");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3', 'c4', 'c5' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe', 'Africa' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40, -10, 25 ], [ 10, -20, 50, 20, -10 ],
+                [ 10, 20, -10, 30, 40 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        stackedwaterfall.data(ds);
+      }, timer);
+    });
+    
+    asyncTest("set value to null", function() {
+      ok(true, "update dataset 2. dataset structure is not changed. update it.");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3', 'c4', 'c5' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe', 'Africa' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40, -10, 25 ], [ null, -20, 50, 20, -10 ], [ null, 20, -10, 30, 40 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        stackedwaterfall.data(ds);
+      }, timer);
+    });
+    
+    asyncTest("update dataset 3", function() {
+      ok(true, "update dataset 3. dataset structure is changed. update it.");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3', 'c4', 'c5' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe', 'Africa' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 20, 20, 10, -10 ], [ null, -20, 50, null, 20 ], [ null, 20, -10, 15, -30 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        stackedwaterfall.data(ds);
+      }, timer);
+    });
+    
+    asyncTest("All value in one bar group are null.", function() {
+      ok(true, "update dataset 3. dataset structure is changed. update it.");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3', 'c4', 'c5' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe', 'Africa' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ null, 20, 20, 10, -10 ], [ null, -20, 50, null, 20 ], [ null, 20, -10, 15, -30 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        stackedwaterfall.data(ds);
+      }, timer);
+    });
+    
+    
+    
+    asyncTest("all null value", function() {
+      ok(true, "All value is null.");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3', 'c4', 'c5' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe', 'Africa' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ null, null, null, null, null ], [ null, null, null, null, null ], [ null, null, null, null, null ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        stackedwaterfall.data(ds);
+      }, timer);
+    });
+
+    module('Update Properties');
+    
+    asyncTest("Data Loading animation = false.", function() {
+      ok(true, "data loading animation is false.");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        cleanChart();
+        var options = {
+            plotArea : {
+              animation : {
+                dataLoading : false
+              }
+            }
+        };
+        createChart(ds, "horizontal_stacked_waterfall", options);
+      }, timer);
+    });
+    
+    asyncTest("Data Loading animation = false.", function() {
+      var ds = new CrosstableDataset();
+      ok(true, 'update dataset to check data update animation.');
+      setTimeout(function() {
+        start();
+        ds.setData({
+          'analysisAxis' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Country',
+              'values' : [ 'C1', 'C2', 'C3' ]
+            } ]
+          }, {
+            'index' : 2,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Region',
+              'values' : [ 'Asia', 'Europe' ]
+            } ]
+          } ],
+          'measureValuesGroup' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Measure',
+              'name' : 'Profit',
+              'values' : [ [ 10, -20, 80 ], [ 30, -20, 50 ] ]
+            } ]
+          } ]
+        });
+        stackedwaterfall.data(ds);
+      }, timer);
+    });
+    
+    asyncTest("Data Updating animation = false.", function() {
+      ok(true, 'update dataset to check data update animation.');
+      setTimeout(function() {
+        start();
+        var options = {
+            plotArea : {
+              animation : {
+                dataUpdating : false
+              }
+            },
+            title : {
+                visible : true,
+                text : "Check Animation Properties"
+            }
+        };
+        stackedwaterfall.properties(options);
+      }, timer);
+    });
+    
+    asyncTest("Data Updating animation = false.", function() {  
+      var ds = new CrosstableDataset();
+      ok(true, 'update dataset to check data update animation.');
+      setTimeout(function() {
+        start();
+        ds.setData({
+          'analysisAxis' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Country',
+              'values' : [ 'C1', 'C2', 'C3' ]
+            } ]
+          }, {
+            'index' : 2,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Region',
+              'values' : [ 'Asia', 'Europe' ]
+            } ]
+          } ],
+          'measureValuesGroup' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Measure',
+              'name' : 'Profit',
+              'values' : [ [ 10, null, 50 ], [ 30, null, 50 ] ]
+            } ]
+          } ]
+        });
+        stackedwaterfall.data(ds);
+      }, timer);
+    });
+    
+    asyncTest("Data Updating animation = false.", function() {
+      ok(true, "check resize animation.");
+      setTimeout(function() {
+        start();
+        stackedwaterfall.size({width: 800, height : 600});
+      }, timer);
+    });
+    
+    asyncTest("Data Updating animation = false.", function() {
+      ok(true, 'update dataset to check data update animation.');
+      setTimeout(function() {
+        start();
+        var options = {
+            plotArea : {
+              animation : {
+                dataUpdating : true,
+                resizing : false
+              }
+            },
+            title : {
+                visible : true,
+                text : "Check Animation Properties"
+            }
+        };
+        stackedwaterfall.properties(options);
+      }, timer);
+    });
+    
+    asyncTest("Resize animation = false.", function() {
+      ok(true, "check resize animation.");
+      setTimeout(function() {
+        start();
+        stackedwaterfall.size({width: 600, height : 400});
+      }, timer);
+    });
+    
+    asyncTest("Change Color Palette.", function() {
+      ok(true, 'update properties to check color palette.');
+      setTimeout(function() {
+        start();
+        var options = {
+            plotArea : {
+              colorPalette : ['red', 'yellow']
+            },
+            title : {
+                visible : true,
+                text : "Check Color Palette Properties"
+            }
+        };
+        stackedwaterfall.properties(options);
+      }, timer);
+    });
+    
+    asyncTest("Change Bar Gap.", function() {
+      ok(true, 'update properties to check bar gap.');
+      setTimeout(function() {
+        start();
+        var options = {
+            plotArea : {
+              barGap : 55
+            },
+            title : {
+                visible : true,
+                text : "Check Color Palette Properties"
+            }
+        };
+        stackedwaterfall.properties(options);
+      }, timer);
+    });
+    
+    module('Templates');
+    
+    asyncTest("flashy", function(){
+      ok(true, 'flashy');
+      
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      
+      setTimeout(function() {
+        start();
+        cleanChart();
+        sap.viz.TemplateManager.apply('flashy', function(){
+          createChart(ds);
+        });
+      }, timer);
+    });
+  
+    /*
+    asyncTest("incomplete_ghost", function(){
+      ok(true, 'incomplete_ghost');
+      
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      
+      setTimeout(function() {
+        start();
+        cleanChart();
+        sap.viz.TemplateManager.apply('incomplete_ghost', function(){
+          createChart(ds);
+        });
+      }, timer);
+    });
+    
+    asyncTest("empty_ghost", function(){
+      ok(true, 'empty_ghost');    
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      
+      setTimeout(function() {
+        start();
+        cleanChart();
+        sap.viz.TemplateManager.apply('empty_ghost', function(){
+          createChart(ds);
+        });
+      }, timer);
+    });
+    */
+    asyncTest("standard", function(){
+      ok(true, 'standard');
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      
+      setTimeout(function() {
+        start();
+        cleanChart();
+        sap.viz.TemplateManager.apply('standard', function(){
+          createChart(ds);
+        });
+      }, timer);
+    });
+
+    asyncTest("Show Data Label.", function() {
+      ok(true, 'update properties to show data label.');
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        cleanChart();
+        var chartOption = {
+            title : {
+              visible : true,
+                text : 'Stacked Waterfall Chart'
+            },
+            dataLabel: {
+                visible : true
+            }
+        };
+        createChart(ds, undefined, chartOption);
+      }, timer);
+    });
+    
+    module("Total/Sub-total value");
+    
+    asyncTest("Total value.", function() {
+      ok(true, 'update properties to check total value.');
+      setTimeout(function() {
+        start();
+        var options = {
+            plotArea : {
+              isShowTotal : true
+            },
+            title : {
+                visible : true,
+                text : "Check Total Value"
+            }
+        };
+        var ds = new CrosstableDataset();
+        ds.setData({
+          'analysisAxis' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Country',
+              'values' : [ 'C1', 'C2', 'C3' ]
+            } ]
+          }, {
+            'index' : 2,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Region',
+              'values' : [ 'Asia', 'Europe' ]
+            } ]
+          } ],
+          'measureValuesGroup' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Measure',
+              'name' : 'Profit',
+              'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+            } ]
+          } ]
+        });
+        cleanChart();
+        createChart(ds, undefined,options);
+      }, timer);
+    });
+    
+    asyncTest("Sub-total value.", function() {
+      ok(true, 'update properties to check total value.');
+      setTimeout(function() {
+        start();
+        var options = {
+            plotArea : {
+              isShowTotal : true,
+              subtotal:{
+                subGroups : [1, 2]
+              }
+            },
+            title : {
+                visible : true,
+                text : "Check Total Value"
+            }
+        };
+        var ds = new CrosstableDataset();
+        ds.setData({
+          'analysisAxis' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Country',
+              'values' : [ 'C1', 'C2', 'C3' ]
+            } ]
+          }, {
+            'index' : 2,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Region',
+              'values' : [ 'Asia', 'Europe' ]
+            } ]
+          } ],
+          'measureValuesGroup' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Measure',
+              'name' : 'Profit',
+              'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+            } ]
+          } ]
+        });
+        cleanChart();
+        createChart(ds, undefined, options);
+      }, timer);
+    });
+    
+    asyncTest("Sub-total value --- isRuntimeTotal = false.", function() {
+      ok(true, 'update properties to check total value.');
+      setTimeout(function() {
+        start();
+        var options = {
+            plotArea : {
+              isShowTotal : true,
+              subtotal:{
+                subGroups : [1, 2],
+                isRuntimeTotal : false
+              }
+            },
+            title : {
+                visible : true,
+                text : "Check Total Value"
+            }
+        };
+        var ds = new CrosstableDataset();
+        ds.setData({
+          'analysisAxis' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Country',
+              'values' : [ 'C1', 'C2', 'C3' ]
+            } ]
+          }, {
+            'index' : 2,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Region',
+              'values' : [ 'Asia', 'Europe' ]
+            } ]
+          } ],
+          'measureValuesGroup' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Measure',
+              'name' : 'Profit',
+              'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+            } ]
+          } ]
+        });
+        cleanChart();
+        createChart(ds, undefined, options);
+      }, timer);
+    });
+    
+    asyncTest("Sub-total value --- with null value.", function() {
+      ok(true, "Sub-total value --- with null value");
+      var options = {
+          plotArea : {
+            isShowTotal : true,
+            subtotal:{
+              subGroups : [1, 2],
+              isRuntimeTotal : false
+            }
+          },
+          dataLabel: {
+            visible : true
+          },
+          title : {
+              visible : true,
+              text : "Check Total Value"
+          }
+      };
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3', 'c4', 'c5' ]
+          } ]
+        }, {
+          'index' : 2,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : [ 'Asia', 'Europe', 'Africa' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ null, 20, 20, 10, -10 ], [ null, -20, 50, null, 20 ], [ null, 20, -10, 15, -30 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        cleanChart();
+        createChart(ds, undefined, options);
+      }, timer);
+    });
+    
+    asyncTest("Horizontal: Sub-total value --- isRuntimeTotal = false.", function() {
+      ok(true, 'update properties to check total value.');
+      setTimeout(function() {
+        start();
+        var options = {
+            plotArea : {
+              isShowTotal : true,
+              subtotal:{
+                subGroups : [1, 2],
+                isRuntimeTotal : false
+              }
+            },
+            dataLabel: {
+              visible : true
+            },
+            title : {
+                visible : true,
+                text : "Check Total Value"
+            }
+        };
+        var ds = new CrosstableDataset();
+        ds.setData({
+          'analysisAxis' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Country',
+              'values' : [ 'C1', 'C2', 'C3' ]
+            } ]
+          }, {
+            'index' : 2,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Region',
+              'values' : [ 'Asia', 'Europe' ]
+            } ]
+          } ],
+          'measureValuesGroup' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Measure',
+              'name' : 'Profit',
+              'values' : [ [ 10, 10, -40 ], [ 22, -20, 50 ] ]
+            } ]
+          } ]
+        });
+        cleanChart();
+        createChart(ds, "horizontal_stacked_waterfall", options);
+      }, timer);
+    });
+    
+    module('waterfall', {
+      setup : function(){
+        if(stackedwaterfall===undefined){
+          //create new chart.
+          var ds = new CrosstableDataset();
+          ds.setData({
+            'analysisAxis' : [ {
+              'index' : 1,
+              'data' : [ {
+                'type' : 'Dimension',
+                'name' : 'Country',
+                'values' : [ 'C1', 'C2', 'C3', 'c4', 'c5' ]
+              } ]
+            } ],
+            'measureValuesGroup' : [ {
+              'index' : 1,
+              'data' : [ {
+                'type' : 'Measure',
+                'name' : 'Profit',
+                'values' : [ [ -5, -20, -20, 6, -10 ] ]
+              } ]
+            } ]
+          });
+          createChart(ds, "waterfall");
+        }
+      }  
+    });
+    
+    asyncTest("Waterfall: Sub-total value --- isRuntimeTotal = false.", function() {
+      ok(true, 'update properties to check total value.');
+      setTimeout(function() {
+        start();
+        var options = {
+            plotArea : {
+              isShowTotal : true,
+              subtotal:{
+                subGroups : [1, 2],
+                isRuntimeTotal : false
+              }
+            },
+            title : {
+                visible : true,
+                text : "Check Total Value"
+            }
+        };
+        var ds = new CrosstableDataset();
+        ds.setData({
+          'analysisAxis' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Dimension',
+              'name' : 'Country',
+              'values' : [ 'C1', 'C2', 'C3' ]
+            } ]
+          }],
+          'measureValuesGroup' : [ {
+            'index' : 1,
+            'data' : [ {
+              'type' : 'Measure',
+              'name' : 'Profit',
+              'values' : [ [ 10, 10, -40 ] ]
+            } ]
+          } ]
+        });
+        cleanChart();
+        createChart(ds, "waterfall", options);
+      }, timer);
+    });
+    
+    asyncTest("Waterfall dataset 1", function() {
+      ok(true, "Waterfall dataset 1");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3', 'c4', 'c5' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ null, 20, 20, 10, -10 ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        stackedwaterfall.data(ds);
+      }, timer);
+    });
+    
+    asyncTest("Waterfall dataset 2", function() {
+      ok(true, "Waterfall dataset 2");
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : [ 'C1', 'C2', 'C3', 'c4', 'c5' ]
+          } ]
+        } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Profit',
+            'values' : [ [ null, null, null, null, null ] ]
+          } ]
+        } ]
+      });
+      setTimeout(function() {
+        start();
+        stackedwaterfall.data(ds);
+      }, timer);
+    });
+    
+    var cleanChart = function() {
+      if (stackedwaterfall !== undefined) {
+        stackedwaterfall.destroy();
+      }
+    };
+
+    var createChart = function(dataset, chartType, options) {
+      stackedwaterfall = vizcore.createViz({
+        type : 'viz/' + ((chartType === undefined) ? 'stacked_waterfall' : chartType),
+        data : dataset,
+        container : $('#chart'),
+        options : (options === undefined) ? chartOption : options
+      });
+    }
+  </script>
+</body>
+</html>

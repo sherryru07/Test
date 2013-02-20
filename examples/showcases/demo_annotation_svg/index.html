@@ -1,0 +1,90 @@
+<!DOCTYPE html >
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Annotation Demo</title>
+    <script type="text/javascript" src="../../libs/jquery.js"></script>
+    <script type="text/javascript" src="../../libs/jquery-ui-1.8.23.custom.min.js"></script>
+    <script type="text/javascript" src="../../libs/d3.v2.js"></script>
+    <script type="text/javascript" src="../../libs/sap.viz.js"></script>
+    <script type="text/javascript" src="annotation.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources/jquery-ui-1.8.14.custom.css">
+    <script type='text/javascript'>
+            $('#changeTheme').click(function(){
+                sap.vizkit.ThemeManager.changeTheme('classicDay');
+            });
+            $(document).ready(function() {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+
+                Environment.initialize({
+                    'log' : 'debug'
+                });
+
+                var chartOption = {
+                    plotArea : {
+                        //'colorPalette' : d3.scale.category20().range()
+                    },
+                    title : {
+                      visible : true,
+                        text : 'Sample Bar Chart Title'
+                    }
+                };
+
+                var ds = new CrosstableDataset();
+                ds.data({
+                    'analysisAxis': [{
+                    'index': 1,
+                    'data': [{
+                            'type': 'Dimension',
+                            'name': 'Product',
+                            'values': ['Car', 'Truck', 'Motorcycle', 'Bicycle']
+                            }]
+                     }, {
+                    'index' : 2,
+                    'data': [{
+                            'type': 'Dimension',
+                            'name': 'Country',
+                            'values': ['China', 'USA']
+                            }, {
+                            'type': 'Dimension',
+                            'name': 'Year',
+                            'values': ['2001', '2001']
+                            }]
+                    }], 
+                    'measureValuesGroup': [{
+                    'index': 1,
+                    'data': [{
+                        'type': 'Measure',
+                        'name': 'Profit',
+                        'values': [[25, 136, 23, 116], [58, 128, 43, 73]]
+                    }, {
+                        'type': 'Measure',
+                        'name': 'Revenue',
+                        'values': [[50, 236, 43, 126], [158, 228, 143, 183]]
+                    }]
+            }]});
+
+                //TODO How to define feeding API?
+                var barChart = vizcore.createViz({
+                    type : 'viz/bar',
+                    data : ds,
+                    container : $('#chart'),
+                    options : chartOption
+                });
+                
+                barChart.on('selectData', function () {
+                  // Do something cool
+                });
+                window.startAnnotation(barChart,"chart")
+            });
+
+        </script>
+</head>
+<body>
+    
+    <div id="chart" style="position:relative;width:800px;height:600px;"></div>
+</body>
+</html>

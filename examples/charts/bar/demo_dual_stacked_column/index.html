@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Viz Stacked Bar Chart</title>
+        <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+        <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+        <script type="text/javascript" src="../../../../libs/json2.js"></script>
+        <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        
+    </head>
+    <body>
+        <div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>       
+        <script type='text/javascript'>
+        $(function() {
+            var Environment = sap.viz.env;
+            var CrosstableDataset = sap.viz.data.CrosstableDataset;
+            var vizcore = sap.viz.core;
+            
+            Environment.initialize({
+                'log': 'debug'
+            });
+            
+            var chartOption = {
+                plotArea: {
+                //'colorPallet' : ["#D9B5CA", "#AED1DA", "#DFECB2", "#FCDAB0", "#F5BCB4"]
+                },
+                title: {
+                  visible : true,
+                  text: 'Sample Stacked Bar Chart Title'
+                }
+            };
+            
+            var ds = new CrosstableDataset();
+            ds.setData({'analysisAxis':[{
+                'index' : 1,
+                'data' : [{
+                    'type' : 'Dimension',
+                    'name' : 'Country',
+                    'values' : ['China', 'China', 'USA', 'USA', 'Canada', 'Canada']
+                }, {
+                    'type' : 'Dimension',
+                    'name' : 'Year',
+                    'values' : ['2001', '2002', '2001', '2002', '2001', '2002']
+                }]
+            }, {
+                'index' : 2,
+                'data' : [{
+                    'type' : 'Dimension',
+                    'name' : 'Product',
+                    'values' : ['Car', 'Truck']
+                }]
+            }],'measureValuesGroup': [{
+                'index': 1,
+               'data' :[{
+                                'type' : 'Measure',
+                                'name' : 'Profit',
+                                'values' : [[25, 136 ,58, 128 ,58, 24], [159, 147 ,149, 269, 38, 97]]
+                } ,{
+                                   
+                                'type' : 'Measure',
+                                'name' : 'Revenue',
+                                'values' : [[15,36,58, 108,68, 24], [119, 77, 49, 69, 38, 97]]
+                }]
+            },{
+                'index': 2,
+               'data' :[{
+                                'type' : 'Measure',
+                                'name' : 'Tax',
+                                'values' : [[99,36,8, 28,27, 7], [5, 69, 8, 8, 9, 4]]
+                }]
+            }]});
+            //TODO How to define feeding API?
+            //var bar = new HtmlViz('viz/stacked_bar', $('#chart'), chartOption, ds);
+            var bar = vizcore.createViz({
+                type: 'viz/dual_stacked_column',
+                data: ds,
+                container: $('#chart'),
+                options: chartOption
+            });
+        });
+
+        </script>
+    </body>
+</html>

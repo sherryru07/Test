@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Horizontal Boxplot Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+	</head>
+	<body>
+		<div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+		<script type='text/javascript'>
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+					title : {
+					  visible : true,
+						text : 'Sample Horizontal Boxplot Chart Title'
+					}
+				};
+
+				var ds = new CrosstableDataset();
+				ds.setData({ 
+			           'analysisAxis': [
+			                            {
+			                                'index': 1,
+			                                'data' : [ 
+			                                {
+			                                                'type' : 'Dimension',
+			                                                'name' : 'Country',
+			                                                'values' : ['China','China', 'China','USA', 'USA', 'USA', 'USA', 'Canada','Canada', 'Canada']
+			                                },  {
+			                                                'type' : 'Dimension',
+			                                                'name' : 'Year',
+			                                                'values' : ['2011','2011', '2011','2011', '2012','2012', '2012', '2011', '2011', '2011']
+			                                } , { 
+			                                                'type' : 'Dimension',
+			                                                'name' : 'Month',
+			                                                'values' : ['1','1', '1','5', '8','8', '8', '10', '10', '10']
+			                                } 
+			                                    ]
+			                            }, {
+			                                'index': 2,
+			                                'data': [{
+			                                                'type' : 'Dimension',
+			                                                'name' : 'Products',
+			                                                'values' : ['Car', 'Truck']
+			                                }
+			                			]
+			                            }], 
+			                            'measureValuesGroup': [{
+			                                'index': 1,
+			                               'data' :[{
+			                                                'type' : 'Measure',
+			                                                'name' : 'Profit',
+			                                                'values' : [[25, 136, 58, 128, 58, 24, 33, 45, 78, 60], [159, 147, 149, 269, 38, 97, 102, 110, 120, 88]]
+			                                },
+			                				{
+			                                                'type' : 'Measure',
+			                                                'name' : 'Revenue',
+			                                                'values' : [[55, 126, 58, 128, 58, 24, 25, 38, 68, 48], [109, 147, 149, 249, 38, 97, 78, 38, 28, 101]]
+			                                }]
+			                            }]});
+
+				var tagcloud = vizcore.createViz({
+					type : 'viz/horizontal_boxplot',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+			});
+
+		</script>
+	</body>
+</html>

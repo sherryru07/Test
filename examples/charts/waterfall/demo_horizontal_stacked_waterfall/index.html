@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Viz Horizontal Stacked Waterfall Chart</title>
+        <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+        <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+        <script type="text/javascript" src="../../../../libs/json2.js"></script>
+        <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+    </head>
+    <body>
+        <div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+        <script type='text/javascript'>
+            $(function() {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+
+                Environment.initialize({
+                    'log' : 'debug'
+                });
+
+                var chartOption = {
+                    title : {
+                      visible : true,
+                        text : 'Horizontal Stacked Waterfall Chart'
+                    }
+                };
+
+               var ds = new CrosstableDataset();
+               ds.setData({
+                   'analysisAxis' : [ {
+                     'index' : 1,
+                     'data' : [ {
+                       'type' : 'Dimension',
+                       'name' : 'Country',
+                       'values' : [ 'C1', 'C2', 'C3' ]
+                     } ]
+                   } ,{
+                     'index' : 2,
+                     'data' : [ {
+                       'type' : 'Dimension',
+                       'name' : 'Region',
+                       'values' : [ 'Asia', 'Europe']
+                     } ]
+                   } ],
+                   'measureValuesGroup' : [ {
+                     'index' : 1,
+                     'data' : [ {
+                       'type' : 'Measure',
+                       'name' : 'Profit',
+                       'values' : [ [ 10, 10, -40 ], [ 22, -20, 50] ]
+                     } ]
+                   } ]
+                 });
+
+                    var stackedwaterfall = vizcore.createViz({
+                      type : 'viz/horizontal_stacked_waterfall',
+                      data : ds,
+                      container : $('#chart'),
+                      options : chartOption
+                    });
+                  });
+                </script>
+    </body>
+</html>

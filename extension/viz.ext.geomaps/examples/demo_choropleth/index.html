@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Choropleth Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        <script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+	</head>
+	<body>
+		<div id="chart" style="position:absolute; left: 50px; width: 90%; height: 90%; background-color: #ffffff"></div>
+
+		<script type='text/javascript'>
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+                sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+					plotArea: {
+						startColor: 'rgb(203, 201, 226)',
+						endColor: 'rgb(84, 39, 143)'
+					},
+		            title : {
+	            		visible: false,
+		                text : 'Choropleth Chart Sample'
+		            },
+		            legend : {
+		                isHierarchy : false,
+		                position : 'right',
+		                legendType : 'BubbleColorLegend'  //BubbleColorLegend
+		            }
+		        };
+
+				var ds = new CrosstableDataset();
+
+				var navValues = [ { featureId: '21017065,NAVTEQ', name: 'Colorado' },
+                                { featureId: '21009408,NAVTEQ', name: 'California' },
+                                { featureId: '21010819,NAVTEQ', name: 'New York' },
+                                { featureId: '21015214,NAVTEQ', name: 'Texas' },
+                                { featureId: '21022302,NAVTEQ', name: 'District of Columbia' },
+                                { featureId: '21014299,NAVTEQ', name: 'Massachusetts' },
+                                { featureId: '21002247,NAVTEQ', name: 'Illinois' },
+                                { featureId: '21023288,NAVTEQ', name: 'Florida' },
+                                { featureId: '21014052,NAVTEQ', name: 'Montana' },
+                                { featureId: '21001865,NAVTEQ', name: 'Washington' }, 
+								{ featureId: '21001841,NAVTEQ', name: 'Oregon' }, 
+								{ featureId: '21007137,NAVTEQ', name: 'Michigan' }, 
+								{ featureId: '21001828,NAVTEQ', name: 'Idaho' }, 
+								{ featureId: '21009401,NAVTEQ', name: 'Arizona' }, 
+								{ featureId: '21020362,NAVTEQ', name: 'Tennessee' } 
+                                ];
+
+                var values = [];
+                var infos = [];
+                var measures = [], min = 18, max = 150, v, setNull = false;
+
+                $.each(navValues, function(i, v) {
+                	values.push(v.name);
+                	infos.push({ featureId : v.featureId });
+                	v = Math.round(Math.random() * max);
+	                if (v <= min) {
+	                  if (setNull) {
+	                    v = null;
+	                  } else {
+	                    v = 'invalid value';
+	                  }
+	                  
+	                  setNull = !setNull;
+	                }
+                    
+                    measures.push(v);
+                });
+
+		        ds.setData({
+	                'analysisAxis':[{
+		                'index' : 1,
+		                'data' : [{
+		                    'type' : 'GeoDimension',
+		                    'name' : 'Region',
+		                    'values' : values,
+		                    'infos' : infos
+		                }]
+		            }],  
+		           'measureValuesGroup':[{
+		              'index' : 1,
+		              'data' : [{
+		                  'type' : 'Measure',
+		                  'name' : 'Number of Planes',
+		                  'values' : [ measures ]
+		              }]
+		          }]});
+				
+				var bar = vizcore.createViz({
+					type : 'viz/choropleth',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+				
+			});
+
+		</script>
+	</body>
+</html>

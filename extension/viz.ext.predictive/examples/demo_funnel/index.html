@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Charts</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		<script type="text/javascript" src="../../libs/sap.viz.ext.pa.funnel.js"></script>
+		
+		<!--
+		<script type="text/javascript" src="funnelChart.js"></script>
+		<script type="text/javascript" src="funnelModuleConfig.js"></script>
+    <script type="text/javascript" src="funnelChartConfig.js"></script>        
+		-->
+		
+		<script type="text/javascript">
+		  $(function() {
+		    var Environment = sap.viz.env;
+        var CrosstableDataset = sap.viz.data.CrosstableDataset;
+        var vizcore = sap.viz.core;
+        var Manifest = sap.viz.manifest;
+        
+        Environment.initialize({
+            'log': 'debug'
+        });
+        
+        var testDataSet = {};
+        var testDataFeeding = {};
+        
+	
+    testDataSet['viz/ext/pa/funnel'] = {
+            'analysisAxis': [ {
+                'index': 1,
+                'data': [{
+                    'type': 'Dimension',
+                    'name': 'Sample',
+                    'values': ['1']
+                }]
+            } ,{
+                'index': 2,
+                'data': [{
+                    'type': 'Dimension',
+                    'name': 'Species',
+                    'values': ['A','B','C','D','E','A','B','C','D','E']
+                }]
+            }],
+            'measureValuesGroup': [{
+                'index': 1,
+                'data': [{
+                    'type': 'Measure',
+                    'name': 'sepal',
+                    'values': [[40],[50],[50],[10],[5],[5],[5],[5],[5],[5]]
+                }]
+            }]
+        };
+        
+ 
+    
+        var chartOption = {
+            
+      
+            title: {
+              visible: true,
+                text: 'funnel chart'
+            }
+        };
+        
+        (function() {
+          //register funnel module and viz
+          // Manifest.module.register(module).viz.register(chart);
+          
+          
+            
+            singleChartChange();
+    
+        })();
+        
+        
+   
+       
+    
+   
+    var currentChartId;
+    
+    function singleChartChange(){
+      currentChartId = 'viz/ext/pa/funnel';
+      chartChange(currentChartId);
+    }
+    
+    
+        
+    var chartInstance;
+        function chartChange(chartId) {
+            
+            var ds = new CrosstableDataset();
+            ds.setData(testDataSet[chartId]);
+            
+      setChartOption(chartId,chartOption);
+      chartInstance = vizcore.createViz({
+        type : chartId,
+        data : ds,
+        container : $('#chart'),
+		dataFeeding : testDataFeeding[chartId],
+        options : chartOption
+      });
+      
+     
+        }
+    
+    function setChartOption(chartId, chartOption) {
+                var title = chartOption.title;
+                if (!title)
+                    return;
+                switch (chartId) {
+                    
+                    case 'viz/ext/pa/funnel':
+                        title.text = 'Sample funnel  Chart Title';
+                        break;
+                    default:
+                        title.text = 'Chart Title';
+                }
+            }
+    
+    
+    });
+		</script>
+		<!-- style for funnel chart -->
+		<style type="text/css">		
+				svg {
+  font: 10px sans-serif;
+}
+
+ .hoverfinal:hover
+{
+    opacity: 0.7;
+   
+    }
+        </style>
+        <!--END, style for funnel chart -->
+	</head>
+	<body>
+	
+   
+		<div id="chart" style="width: 800px; height: 500px; background-color: #ffffff"></div>
+		<div style="position:absolute; top:20px; left: 820px;">
+		
+		
+		
+		</div>
+	</body>
+</html>

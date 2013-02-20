@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Sample Electorial Chart</title>
+
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+
+		<script type="text/javascript" src="../../libs/sap.viz.ext.elect.js"></script>      
+
+		<script type="text/javascript">
+
+		  $(function() {
+
+				var Environment = sap.viz.env;
+
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+
+				var vizcore = sap.viz.core;
+
+
+
+				Environment.initialize({
+
+					'log' : 'debug'
+
+				});
+
+
+
+				var chartOption = {
+
+					title : {
+
+					  visible : true,
+
+						text : 'Sample Electrical Chart'
+
+					},
+					elect : {
+						rule: 0.6,
+						groups: ['Group A', 'Undecided', 'Group B'],
+						types: ['Type 1', 'Type 2', 'Type 3', 'Type 4']
+					}
+
+				};
+
+				
+
+
+
+				var ds = new CrosstableDataset();	
+
+				ds.setData({
+
+		            'analysisAxis': [{
+
+		                'index': 1,
+
+		                'data': [{
+
+		                    'type': 'Dimension',
+
+		                    'name': 'Entity',
+
+		                    'values': ['Shanghai', 'Beijing', 'Guangdong', 'Fujian', 'Jiangxi', 'Zhejiang', 'Anhui', 'Jiangsu']
+
+		                }, {
+		                	'type': 'Dimension',
+		                	'name': 'Group',
+		                	'values': [0, 1, 2, 0, 1, 2, 0, 1]
+		                }, {
+		                	'type': 'Dimension',
+		                	'name': 'Type',
+		                	'values': [0, 1, 2, 3, 0, 1, 2, 3]
+		                }]
+
+		            }],
+
+		            'measureValuesGroup': [{
+
+		                'index': 1,
+
+		                'data': [{
+
+		                    'type': 'Measure',
+
+		                    'name': 'Data',
+
+		                    'values': [[3, 4, 5, 3, 4, 4, 5, 3]]
+
+		                }]
+
+		            }]
+
+		        });
+
+				var chart = vizcore.createViz({
+
+					type : 'viz/ext/elect',
+
+					data : ds,
+
+					container : $('#chart'),
+
+					options : chartOption
+
+				});				
+
+				
+
+    
+
+   	 		});
+
+	</script>
+
+	<style type="text/css">		
+
+		.brush .extent {
+
+		    fill-opacity: .3;
+
+		    stroke: #fff;
+
+		    shape-rendering: crispEdges;
+
+		}
+
+		.axis line, .axis path {
+
+		    fill: none;
+
+		    stroke: #000;
+
+		    shape-rendering: crispEdges;
+
+		}
+
+		.axis text {
+
+		    text-shadow: 0 1px 0 #fff;
+
+		    cursor: move;
+
+		}		
+
+       </style>
+
+	</head>
+
+	<body>
+
+		<div id="chart" style="width: 800px; height: 600px; background-color: #ffffff"></div>
+
+	</body>
+
+</html>
+

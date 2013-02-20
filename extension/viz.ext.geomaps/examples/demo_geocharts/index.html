@@ -1,0 +1,1023 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Geo Charts</title>		
+		<link rel="stylesheet" type="text/css" href="jquery-ui/css/smoothness/jquery-ui-1.8.14.custom.css" />
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="jquery-ui/js/jquery-ui-1.8.14.custom.min.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script> 
+        <script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+  		<script type="text/javascript" src="../../../../resources/config/config.js"></script>       
+		<script type="text/javascript">
+		  $(function() {
+		    var Environment = sap.viz.env;
+        var CrosstableDataset = sap.viz.data.CrosstableDataset;
+        var vizcore = sap.viz.core;
+        var Manifest = sap.viz.manifest;
+        var TemplateManager = sap.viz.TemplateManager;
+        sap.viz.lang.langManager.loadPath[0]='../../../../resources/langs/';
+        TemplateManager.loadPath[0] = '../../../../resources/templates/';
+        sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+
+        Environment.initialize({
+            'log': 'debug',
+            'locale': 'en'
+        });
+
+        var geoChartConfig = { 
+            'viz/choropleth' : { title: 'Number of planes in US states' }, 
+            'viz/geobubble' : { title: 'Number of planes by city' }, 
+            'viz/geopie' : { title: '' }, 
+            'viz/multi_geobubble' : { title: '' },
+            'viz/multi_choropleth': { title: '' }
+          },
+          // if url ends with ?fake, use "fake data"
+          isFake = /[\?\&]fake([\=\&]|$)/.test(window.location.search);
+
+        sap.viz.lang.langManager.addListener({
+        	 fn: function(){
+             	chartMap =[];
+            	multichartMap =[];
+            	$('#chartIds').find('option').remove();
+            	$('#multichartIds').find('option').remove();
+            	
+                Manifest.viz.each(function(obj, id) {
+                 if(obj["abstract"] !== true && geoChartConfig[id]) {
+                   if(id.indexOf('viz/multi') === 0){
+
+                     multichartMap.push({
+                         index: id,
+                         value: obj.name
+                     });
+                   }else{
+                     
+                     chartMap.push({
+                         index: id,
+                         value: obj.name
+                     });
+                   }
+                  }
+                });
+                 chartMap.sort(function(a,b){
+                     return a.value > b.value ? 1: -1;
+                 });
+                 multichartMap.sort(function(a,b){
+                     return a.value > b.value ? 1: -1;    
+                 });
+
+                 for( i = 0, length = chartMap.length; i < length; i++){
+                     $("#chartIds").append('<option value=' + chartMap[i].index + '> ' + (i + 1) + ', ' + chartMap[i].value + '</option>');
+                 }
+                 for( i = 0, length = multichartMap.length; i < length; i++){
+                     $("#multichartIds").append('<option value=' + multichartMap[i].index + '> ' + (i + 1) + ', ' + multichartMap[i].value + '</option>');
+                 }
+            },
+       	  	scope: this
+        });
+        
+        var testDataSet = {};
+        var testDataFeeding = {};
+        //Sample Data
+        ///////////////////
+
+             var navValuesChoropleth = [ { featureId: '21017065,NAVTEQ', name: 'Colorado' },
+                            { featureId: '21009408,NAVTEQ', name: 'California' },
+                            { featureId: '21010819,NAVTEQ', name: 'New York' },
+                            { featureId: '21015214,NAVTEQ', name: 'Texas' },
+                            { featureId: '21022302,NAVTEQ', name: 'District of Columbia' },
+                            { featureId: '21014299,NAVTEQ', name: 'Massachusetts' },
+                            { featureId: '21002247,NAVTEQ', name: 'Illinois' },
+                            { featureId: '21023288,NAVTEQ', name: 'Florida' },
+                            { featureId: '21014052,NAVTEQ', name: 'Montana' },
+                            { featureId: '21001865,NAVTEQ', name: 'Washington' }, 
+                            { featureId: '21001841,NAVTEQ', name: 'Oregon' }, 
+                            { featureId: '21007137,NAVTEQ', name: 'Michigan' }, 
+                            { featureId: '21001828,NAVTEQ', name: 'Idaho' }, 
+                            { featureId: '21009401,NAVTEQ', name: 'Arizona' }, 
+                            { featureId: '21020362,NAVTEQ', name: 'Tennessee' } 
+                            ];
+                            
+             var navValuesBubblePie = [{ featureId: 'C21019301,NAVTEQ', name: 'New York' }, 
+                            { featureId: 'C21086811,NAVTEQ', name: 'Vancouver' }, 
+                            { featureId: 'C21155525,NAVTEQ', name: 'Montréal' }, 
+                            { featureId: 'C21156103,NAVTEQ', name: 'Ottawa' }, 
+                            { featureId: 'C21055407,NAVTEQ', name: 'Toronto' }, 
+                            { featureId: 'C23039216,NAVTEQ', name: 'Rio de Janeiro' }, 
+                            { featureId: 'C23380551,NAVTEQ', name: 'Санкт-Петербург' }, 
+                            { featureId: 'C20337455,NAVTEQ', name: 'London' },
+                            { featureId: '20147700,NAVTEQ', name: 'Germany' },
+                            { featureId: '20558991,NAVTEQ', name: 'Gibraltar' }, 
+                            { featureId: '20210071,NAVTEQ', name: 'Monaco' }, 
+                            { featureId: '23055544,NAVTEQ', name: 'Netherlands' }, 
+                            { featureId: '20210072,NAVTEQ', name: 'San Marino' }, 
+                            { featureId: '20128888,NAVTEQ', name: 'Vatican City' }, 
+                            { featureId: '23667688,NAVTEQ', name: 'Malta' }, 
+                            { latLong: [0, 0], name: 'Center' },
+                            ];
+
+             var navValuesAll = [ { featureId: '21017065,NAVTEQ', name: 'Colorado' },
+                            { featureId: '21009408,NAVTEQ', name: 'California' },
+                            { featureId: '21010819,NAVTEQ', name: 'New York' },
+                            { featureId: '21015214,NAVTEQ', name: 'Texas' },
+                            { featureId: '21022302,NAVTEQ', name: 'District of Columbia' },
+                            { featureId: '21014299,NAVTEQ', name: 'Massachusetts' },
+                            { featureId: '21002247,NAVTEQ', name: 'Illinois' },
+                            { featureId: '21023288,NAVTEQ', name: 'Florida' },
+                            { featureId: '21014052,NAVTEQ', name: 'Montana' },
+                            { featureId: '21001865,NAVTEQ', name: 'Washington' }, 
+                            { featureId: '21001841,NAVTEQ', name: 'Oregon' }, 
+                            { featureId: '21007137,NAVTEQ', name: 'Michigan' }, 
+                            { featureId: '21001828,NAVTEQ', name: 'Idaho' }, 
+                            { featureId: '21009401,NAVTEQ', name: 'Arizona' }, 
+                            { featureId: '21020362,NAVTEQ', name: 'Tennessee' },
+                            { featureId: 'C21086811,NAVTEQ', name: 'Vancouver' }, 
+                            { featureId: 'C21155525,NAVTEQ', name: 'Montréal' }, 
+                            { featureId: 'C21156103,NAVTEQ', name: 'Ottawa' }, 
+                            { featureId: 'C21055407,NAVTEQ', name: 'Toronto' }, 
+                            { featureId: 'C23039216,NAVTEQ', name: 'Rio de Janeiro' }, 
+                            { featureId: 'C23380551,NAVTEQ', name: 'Санкт-Петербург' }, 
+                            { featureId: 'C20337455,NAVTEQ', name: 'London' },
+                            { featureId: '20147700,NAVTEQ', name: 'Germany' },
+                            { featureId: '20558991,NAVTEQ', name: 'Gibraltar' }, 
+                            { featureId: '20210071,NAVTEQ', name: 'Monaco' }, 
+                            { featureId: '23055544,NAVTEQ', name: 'Netherlands' }, 
+                            { featureId: '20210072,NAVTEQ', name: 'San Marino' }, 
+                            { featureId: '20128888,NAVTEQ', name: 'Vatican City' }, 
+                            { featureId: '23667688,NAVTEQ', name: 'Malta' }, 
+                            { latLong: [0, 0], name: 'Center' },
+                            ];
+
+      /////////////////
+        //viz/choropleth
+        (function() {
+
+            var values = [];
+            var infos = [];
+
+            $.each(navValuesChoropleth, function(i, v) {
+                values.push(v.name);
+                infos.push({ featureId : v.featureId });
+            });
+
+            /*
+                Geo data
+                MG 1: feature id
+                MG 2: size
+                AA 1: (future) color
+                AA 2: (future) shape
+            */
+            testDataSet['viz/choropleth'] = {                 
+                'analysisAxis':[{
+                    'index' : 1,
+                    'data' : [{
+                        'type' : 'GeoDimension',
+                        'name' : 'Region',
+                        'values' : values,
+                        'infos' : infos
+                    }]
+                }],  
+               'measureValuesGroup':[{
+                    'index' : 1,
+                    'data' : [{
+                        'type' : 'Measure',
+                        'name' : 'Number of Planes',
+                        'values' : [[18, 98, 30, 46, 64, null, 102, 150, 73, 97, 55, 20, null, 128, 119, 60, 30, 98, 19].slice(0,values.length)],
+                        'isFake': isFake
+                    }]
+                }]
+            };
+        })();
+
+        /////////////////
+        //viz/geobubble
+        (function() {
+            var values = [];
+            var infos = [];
+
+            for (var i = 0; i < navValuesBubblePie.length; i++) {
+                if (Math.random() > 0.5) {
+                    values.push(navValuesBubblePie[i].name);
+                    infos.push({ featureId: navValuesBubblePie[i].featureId, latLong: navValuesBubblePie[i].latLong });
+                }
+            }
+            
+            testDataSet['viz/geobubble'] = {
+                'analysisAxis':[{
+                    'index' : 1,
+                    'data' : [{
+                        'type' : 'Dimension',
+                        'name' : 'Region',
+                        'values' : values,
+                        'infos' : infos
+                     }]
+                }],  
+                'measureValuesGroup':[{
+                    'index' : 1,
+                    'data' : [{
+                        'type' : 'Measure',
+                        'name' : 'Number of Planes',
+                        'values' : [[18, 98, 30, 46, 100, 103, 102, 150, 73, 100, 97, 20, 119, 30, 129, 60, 30, 98, 19].slice(0,values.length)],
+                        'isFake': isFake
+                    }]
+                }]
+            };
+        })();
+
+        //////////////////////////
+        // viz/geopie
+        (function() {
+            var geoPieValues = [];
+            var geoPieInfos = [];
+
+            for (var i = 0; i < navValuesBubblePie.length; i++) {
+                geoPieValues.push(navValuesBubblePie[i].name);
+                geoPieInfos.push({ featureId: navValuesBubblePie[i].featureId, latLong: navValuesBubblePie[i].latLong });
+            }
+
+            testDataSet['viz/geopie'] = {
+              'analysisAxis':[{
+                'index' : 1,
+                'data' : [{
+                  'type' : 'Dimension',
+                  'name' : 'City',
+                  'values' : geoPieValues,
+                  'infos' : geoPieInfos
+                }]}, {
+                  'index' : 2,
+                  'data' : [{
+                      'type' : 'Dimension',
+                      'name' : 'Year',
+                      'values' : [2000, 2001, 2002]
+                }]}],  
+                'measureValuesGroup':[ {
+                  'index' : 1,
+                  'data' : [{
+                      'type' : 'Measure',
+                      'name' : 'Number of Planes',
+                      'values' : [[18, 98, 30, 46, 100, 103, 102, 150, 73, 100, 97, 20, 119, 30, 129, 60, 30, 98, 19].slice(0, geoPieValues.length),
+                                  [28, 58, 39, 77, 211, 118, 166, 50, 173, 130, 197, 120, 19, 230, 29, 68, 30, 90, 49].slice(0, geoPieValues.length),
+                                  [30, 90, 50, 90, 200, 140, 160, 100, 200, 130, 197, 160, 80, 200, 100, 60, 30, 90, 39].slice(0, geoPieValues.length)],
+                        'isFake': isFake
+                  }]
+              }]};
+        })();
+
+        // Multi-choropleth
+        (function() {
+              var values = [];
+              var infos = [];
+              var measures = [], min = 18, max = 150, v;
+
+              $.each(navValuesChoropleth, function(i, v) {
+                values.push(v.name);
+                infos.push({ featureId : v.featureId });
+                
+                var measure = [];
+                for (var i = 0; i < 6; i++) {
+                  v = Math.round(Math.random() * max);
+                  measure.push((v > min) ? v : min);
+                }
+                measures.push(measure);
+            });
+              
+            testDataSet['viz/multi_choropleth'] = {
+                'analysisAxis' : [
+                    {
+                      'index' : 1,
+                      'data' : [
+                          {
+                            'type' : 'Dimension',
+                            'name' : 'Product',
+                            'values' : [ 'Car', 'Car', 'Truck', 'Truck', 'Motorcycle', 'Motorcycle']
+                          },
+                          {
+                            'type' : 'Dimension',
+                            'name' : 'Year',
+                            'values' : [ '2001', '2002', '2001', '2002', '2001', '2002']
+                          } ]
+                    }, {
+                      'index' : 2,
+                      'data' : [ {
+                        'type' : 'Dimension',
+                        'name' : 'City',
+                        'values' : values,
+                        'infos' : infos
+                      }]
+                    } ],
+                'measureValuesGroup' : [ {
+                      'index' : 1,
+                      'data' : [ {
+                        'type' : 'Measure',
+                        'name' : 'Number of Planes',
+                        'values' : measures,
+                        'isFake': isFake
+                      } ]
+                    } ]
+                };
+        })(); 
+
+        // multi-geobubble
+        (function() {
+              var values = [];
+              var infos = [];
+
+              var measures = [], min = 18, max = 150, v;
+
+              $.each(navValuesBubblePie, function(i, v) {
+                values.push(v.name);
+                infos.push({ featureId: navValuesBubblePie[i].featureId, latLong: navValuesBubblePie[i].latLong });
+                
+                var measure = [];
+                for (var i = 0; i < 6; i++) {
+                  v = Math.round(Math.random() * max);
+                  measure.push((v > min) ? v : min);
+                }
+                measures.push(measure);
+            });
+
+            testDataSet['viz/multi_geobubble'] = {
+                'analysisAxis' : [
+                    {
+                      'index' : 1,
+                      'data' : [
+                          {
+                            'type' : 'Dimension',
+                            'name' : 'Product',
+                            'values' : [ 'Car', 'Car', 'Truck', 'Truck', 'Motorcycle', 'Motorcycle']
+                          },
+                          {
+                            'type' : 'Dimension',
+                            'name' : 'Year',
+                            'values' : [ '2001', '2002', '2001', '2002', '2001', '2002']
+                          } ]
+                    }, {
+                      'index' : 2,
+                      'data' : [ {
+                        'type' : 'Dimension',
+                        'name' : 'City',
+                        'values' : values,
+                        'infos' : infos
+                      }]
+                    } ],
+                'measureValuesGroup' : [ {
+                  'index' : 1,
+                  'data' : [ {
+                    'type' : 'Measure',
+                    'name' : 'Number of Planes',
+                    'values' : measures,
+                    'isFake': isFake
+                  } ]
+                } ]
+              };
+        })();
+
+
+        var chartOption = {
+            multiLayout: {
+              'numberOfDimensionsInColumn': 1
+            },
+            
+            line: {
+                'width': 2
+            },
+            
+            stackedbar: {
+                'isRoundCorner': true,
+                 selectability:{
+                  mode:'multiple'
+                }
+            },
+            
+            bar: {
+                'isRoundCorner': true,
+                selectability:{
+                  mode:'multiple'
+                }
+            },
+            
+            verticalbar: {
+                'isRoundCorner': true,
+                selectability:{
+                  mode:'multiple'
+                }
+            },
+            
+            stackedverticalbar: {
+                'isRoundCorner': true,
+                selectability:{
+                  mode:'multiple'
+                }
+            },
+            bubble:{
+              selectability:{
+                mode: 'multiple'
+              }
+            },
+            waterfall:{
+              selectability:{
+                mode: 'multiple'
+              }
+            },
+            pie : {
+              tooltip : {
+                visible : true,
+                valueFormat : "n",
+                percentageFormat : ".0%"
+              }
+            },
+            
+            radar : {
+						  valueaxis : {
+						  	visible : true,
+						    title : {
+						      text : "Range",
+						      visible : true
+						    }
+						  },
+						  colorPalette : [],
+						  markerPalette: [],
+						  dataline : {
+						    weight : 2,
+						    fill : {
+						      enabled : true,
+						      transparency : 0.3
+						    }
+						  },
+						  tooltip : {
+						  	visible : true
+						  }
+						},
+            
+            title: {
+              visible: true,
+                text: 'Chart Title'
+            },
+            
+            tagcloud : {
+              layout : 'Wordle'
+                            }
+        };
+        
+        /*
+         * currently it's disabled in the page.
+         */
+        var randomPalette = [['#756E48', '#A37B5B', '#E0776E', '#ED9164', '#FFAD51'],
+                             ['#022601','#467302', '#72A603', '#ABD904', '#EAF205'],
+                             ['#3D0E2E', '#8C6B56', '#E0B579', '#F5E194', '#FFF89D'],
+                             ['#7F6265', '#FFA256', '#F7DD77', '#E0D054', '#ABA73C']];
+        var randomPaletteIdx = 0;
+        var randomPaletteLen = randomPalette.length;
+        (function(){
+          $('#switchCP').click(function(){
+            var propCat = Manifest.viz.get(currentChartId).getChartPropCate();
+            var currentProps = chartOption[propCat];
+            if(!currentProps) currentProps = {};
+            //add color palette to it
+            currentProps['primaryValuesColorPalette'] = randomPalette[randomPaletteIdx++ % randomPaletteLen];
+            //for pie like chart
+            currentProps['colorPalette'] = currentProps['primaryValuesColorPalette'];
+            chartInstance.properties(chartOption);
+          });
+        })();
+        
+        /*
+         * currently it's disabled in the page.
+         */
+        
+        function getRandomNumber (min, max) {
+          return parseFloat((Math.random() * (max - min + 1)).toFixed(2)) + min;
+        }
+        
+        function random2dimensionArray(arrData){
+          var a1;
+          for(var i = 0, len = arrData.length; i < len; i++){
+            a1 = arrData[i];
+            for(var j = 0, jlen = a1.length; j < jlen; j++){
+              a1[j] = getRandomNumber (1, 1000); 
+            }
+          }
+        }
+        
+        function randomData(currentData){
+          var dataA1,dataA2,dataV;
+          for(var i = 0, len = currentData.length; i < len; i++){
+            dataA1 = currentData[i].data;
+            for(var j = 0, jlen = dataA1.length; j < jlen; j++){
+              dataA2 = dataA1[j].values;
+              random2dimensionArray(dataA2);
+            }
+          }
+        }
+        
+        function randomLocation(currentData){
+          var values = [];
+          var infos = [];
+          for (var i = 0; i < navValuesAll.length; i++) {
+            if (Math.random() > 0.5) {
+              values.push(navValuesAll[i].name);
+              infos.push({ featureId: navValuesAll[i].featureId, latLong: navValuesAll[i].latLong });
+              }
+          }        
+          
+          var analysisData = currentData['analysisAxis'];
+          var geoAxisIndex = (currentChartId.indexOf('viz/multi') === 0) ? analysisData.length-1 : 0;
+          analysisData[geoAxisIndex].data[0].values = values;
+          currentData['analysisAxis'][geoAxisIndex].data[0].infos = infos;
+          
+          var measureData = currentData['measureValuesGroup'];
+          for(var i = 0, len = measureData.length; i < len; i++){
+            dataA1 = measureData[i].data;
+            for(var j = 0, jlen = dataA1.length; j < jlen; j++){
+              arrData = dataA1[j].values;
+              if (arrData.length > 0) {
+                if( geoAxisIndex == 0 ) { // single chart
+                  for(var j = 0, jlen = arrData.length; j < jlen; j++){
+                    arrData[j] = new Array (values.length);
+                  }
+                }
+                else { // multiple chart
+                  numPlanes = arrData[0].length;
+                  dataA1[j].values = new Array (values.length);
+                  for (var k=0; k<values.length; k++) {
+                    dataA1[j].values[k] = new Array(numPlanes);
+                  }
+                }
+              }
+            }
+          }
+          randomData (measureData);          
+        }
+        
+        (function(){
+          $('#randomData').click(function(){
+            var currentData = testDataSet[currentChartId]['measureValuesGroup'];
+            randomData(currentData);
+            dsInstance.setData(testDataSet[currentChartId]);
+            chartInstance.data(dsInstance);
+          });
+
+          $('#randomLocation').click(function(){
+            
+            var currentData = testDataSet[currentChartId];
+            randomLocation(currentData);
+            
+            dsInstance.setData(testDataSet[currentChartId]);
+            chartInstance.data(dsInstance);
+          });
+
+
+          $('#ghostData').click(function(){
+            // TODO the following doesn't actually work -- need to clarify with Alex
+            var data = $.extend(true, {}, testDataSet[currentChartId]);
+            data.measureValuesGroup[0].data[0].isFake = true;
+            // console.log(data);
+            dsInstance = new CrosstableDataset();
+            dsInstance.setData(data);
+            chartInstance.data(dsInstance);
+          });
+        })();
+        
+        function findFeeds (feeds, type){
+          var feed, ret = [];
+          for(var i = 0, len = feeds.length; i < len; i++){
+            feed = feeds[i];
+            if(feed.type == type){
+              ret.push(feed);
+            } 
+          }
+          return ret;
+        }
+                        
+        (function(){
+          $('#randomSchema').click(function(){
+            //TODO we are not generating random data based on feed!
+            var feeds = Manifest.viz.get(currentChartId).allFeeds();
+            var currentMData = testDataSet[currentChartId]['measureValuesGroup'];
+            var currentDData = testDataSet[currentChartId]['analysisAxis'];
+            var randomP = {
+              hierarchy : true,
+              range : 10000
+            };
+            var mfeeds = findFeeds (feeds, 'Measure');
+            var dfeeds = findFeeds (feeds, 'Dimension');
+            var feed;
+            var maxStackedDims;
+            for(var i = 0, len = mfeeds.length; i < len; i++){
+              feed = mfeeds[i];
+              if(feed.max > 0){
+                var max = (feed.max === Infinity ? 5 : feed.max);
+                var fnumber = Math.floor(getRandomNumber(feed.min, max));
+                if(fnumber > 0){
+                  randomP['mv' + feed.mgIndex] = fnumber;
+                }  
+              }
+            }
+            
+            for(var i = 0, len = dfeeds.length; i < len; i++){
+              feed = dfeeds[i];
+              maxStackedDims = (feed.maxStackedDims == undefined)? 5 : feed.maxStackedDims;
+              if(feed.max > 0){
+              //if(range.min === 0 && Math.random() > 0.5){
+                //TODO we have chance to include MND here, 50%
+                //but hanads currently don't support MND
+              //}else{
+                randomP['aa' + feed.aaIndex] = Math.floor(getRandomNumber(1, maxStackedDims));
+                randomP['aa' + feed.aaIndex + 'Count'] = Math.floor(getRandomNumber(1, 10));
+              //}
+              }
+            }
+            
+            //get new random data from HANA service
+            //aa1=3&aa1Count=5&aa2=1&aa2Count=8&mv1=1
+            $.getJSON("http://VIZDEV:Password2@shghana2.dhcp.pgdev.sap.corp:8000/dataservice/datagen.xsjs?jsoncallback=?", randomP,
+
+            function (data) {
+                testDataSet[currentChartId] = data;
+                dsInstance.setData(testDataSet[currentChartId]);
+                chartInstance.data(dsInstance);
+            });
+          });
+        })();
+        
+        (function() {
+           $('#chartIds').empty();
+           $('#multichartIds').empty();
+           $("#multichartIds").append('<option value=NULL>Select a Multi Chart</option>');
+      
+           var i = 0;
+           var j = 0;
+           var chartMap =[];
+           var multichartMap =[];  
+
+           Manifest.viz.each(function(obj, id) {
+            if(obj["abstract"] !== true && geoChartConfig[id]){
+              if(id.indexOf('viz/multi') === 0){
+
+                multichartMap.push({
+                    index: id,
+                    value: obj.name
+                });
+                // $("#multichartIds").append('<option value=' + id + '> ' + (++i) + ', ' + obj.name + '</option>');
+              }else{
+                
+                chartMap.push({
+                    index: id,
+                    value: obj.name
+                });
+                // $("#chartIds").append('<option value=' + id + '> ' + (++j) + ', ' + obj.name + '</option>');
+              }
+             }
+           });
+            chartMap.sort(function(a,b){
+                return a.value > b.value ? 1: -1;
+            });
+            multichartMap.sort(function(a,b){
+                return a.value > b.value ? 1: -1;    
+            });
+           
+            for( i = 0, length = chartMap.length; i < length; i++){
+                $("#chartIds").append('<option value=' + chartMap[i].index + '> ' + (i + 1) + ', ' + chartMap[i].value + '</option>');
+            }
+            for( j = 0, length = multichartMap.length; j < length; j++ ){
+                $("#multichartIds").append('<option value=' + multichartMap[j].index + '> ' + (j + 1) + ', ' + multichartMap[j].value + '</option>');
+            }
+            
+            $("#chartIds").change(function() {
+                singleChartChange();
+            });
+      
+            $("#multichartIds").change(function() {
+                multiChartChange();
+            });
+            
+            singleChartChange();
+      makeItResizable();
+        })();
+    
+    function makeItResizable(){
+      $("#chart").resizable();
+      $('#chart').bind('resizestop', function(event, ui){
+        if (chartInstance) {
+          chartInstance.size({
+            'width' : $('#chart').width(),
+            'height' : $('#chart').height()
+          });       
+        }
+      });
+    }
+    
+  
+        
+    function getItemFromArray(dataArray, idx){
+      var ret = [];
+      for(var k = 0, klen = dataArray.length; k < klen; k++){
+        var item = dataArray[k];
+        ret.push(item.values[idx]);       
+      }
+      return ret;
+    }
+    
+    var currentChartId;
+    
+    function singleChartChange(){
+      currentChartId = $("#chartIds").attr('value');
+      chartChange(currentChartId);
+    }
+    
+    function multiChartChange(){
+      var chartId = $("#multichartIds").attr('value');
+      if(chartId !== 'NULL'){
+        currentChartId = chartId;
+        chartChange(currentChartId);
+      }
+    }
+        
+    var chartInstance;
+    var dsInstance;
+    
+    var templateDefs = $('#templateDefs');
+    TemplateManager.addListener({
+    	fn : function(template){
+    		var str= JSON.stringify(template);
+    		// str = js_beautify(str);
+    		templateDefs.val(str);
+    	}
+    });
+    
+    var templateSelect = $("#templates");    
+    templateSelect.change(function() {
+    	TemplateManager.apply(this.value);
+    });
+    
+    var locale = $("#locale");    
+    locale.change(function() {
+    	Environment.initialize({
+    		locale:this.value
+    	});
+    });
+    
+    var customTemplate = 0;
+    $('#changeTemplate').click(function(){
+    	var json = templateDefs.val();
+      var template = JSON.parse(json);
+      template.id = 'custom' + customTemplate++;
+      TemplateManager.register(template);
+      TemplateManager.apply(template.id);
+    });
+    
+        function chartChange(chartId) {
+            var resizable = $('.ui-resizable-handle', $('#chart')).detach();
+      $('div', $('#chart')).remove();
+      
+            $('#eventData').val('');
+            $('#originalData').val('');
+            $('#deselectEventData').val('');
+            $('#deselectOriginalData').val('');
+            
+            dsInstance = new CrosstableDataset();
+            dsInstance.setData(testDataSet[chartId]);
+            
+      setChartOption(chartId,chartOption);
+      chartInstance = vizcore.createViz({
+        type : chartId,
+        data : dsInstance,
+        container : $('#chart'),
+        options : chartOption,
+        dataFeeding : testDataFeeding[chartId]
+      });
+      
+      $('#chart').append(resizable);
+      
+      chartInstance.on('selectData', function(evt){
+        
+        /**
+         * {
+         'type' : 'Dimension' | 'Measure',
+         // for Dimension
+         'path': {
+         aa:
+         di:
+         dii:
+         }
+
+         // for Measure
+         'path':{
+         mg:
+         mi:
+         dii_a1:
+         dii_a2:
+         };
+
+         }
+         */
+		
+         //convert dom elments to string 'dom element''
+         for(var i =0, len = evt.data.length; i < len; i++){
+        	 evt.data[i].target = 'Dom element'; 
+         }
+        $('#eventData').val(/*js_beautify(*/JSON.stringify(evt)/*)*/);
+        var res = "";
+        //try to get original data
+        //originalData
+        var edata = evt.data, type, rowdata = [];
+        
+        for(var i =0, len = edata.length; i < len; i++){
+        	for(var j =0, jlen = edata[i].data.length; j< jlen; j++){
+        		rowdata.push(edata[i].data[j]);
+        	}
+        }
+        
+        for(var j =0; j< rowdata.length; j++){
+          if(rowdata[j] == null || rowdata[j].ctx == null)
+            continue;
+          type = rowdata[j].ctx.type;
+          if (type === 'Measure'){
+            var path = rowdata[j].ctx.path;
+            var chartId = currentChartId;
+            var data = testDataSet[chartId];
+            var result = {};
+            
+            var idx;
+            var dataItem;
+            var dimensionData = data.analysisAxis;
+            var measureData = data.measureValuesGroup;
+            //get dimension data
+            for(var i = 0, len = dimensionData.length; i < len; i++){
+              dataItem = dimensionData[i];
+              if(dataItem.index == 1){
+                idx = path.dii_a1;
+                result.dii_a1 = getItemFromArray(dataItem.data, idx).join('/');
+              }else if(dataItem.index == 2){
+                idx = path.dii_a2;
+                result.dii_a2 = getItemFromArray(dataItem.data, idx).join('/');
+              }
+            }
+            
+            for(var i = 0, len = measureData.length; i < len; i++){
+              dataItem = measureData[i];
+              if(dataItem.index === (path.mg + 1)){
+                var item = dataItem.data[path.mi];
+                result.m = item.name;
+              }
+            }
+                
+            res += (result.dii_a2 == null ? "":result.dii_a2 + '/') + result.dii_a1 + '/' + result.m + '\r';
+          }else if (type === 'Dimension'){
+            
+          }
+          
+        }
+        
+        $('#originalData').val(res);
+        
+      });
+      
+      chartInstance.on('deselectData', function(evt){
+        
+        /**
+         * {
+         'type' : 'Dimension' | 'Measure',
+         // for Dimension
+         'path': {
+         aa:
+         di:
+         dii:
+         }
+
+         // for Measure
+         'path':{
+         mg:
+         mi:
+         dii_a1:
+         dii_a2:
+         };
+
+         }
+         */
+
+    	//convert dom elments to string 'dom element''
+          for(var i =0, len = evt.data.length; i < len; i++){
+         	 evt.data[i].target = 'Dom element'; 
+          }
+         
+        $('#deselectEventData').val(js_beautify(JSON.stringify(evt)));
+        var res = "";
+        //try to get original data
+        //originalData
+        var edata = evt.data, type, rowdata = [];
+        
+        for(var i =0, len = edata.length; i < len; i++){
+        	for(var j =0, jlen = edata[i].data.length; j< jlen; j++){
+        		rowdata.push(edata[i].data[j]);
+        	}
+        }
+        
+        for(var j =0; j< rowdata.length; j++){
+          if(rowdata[j] == null || rowdata[j].ctx == null)
+            continue;
+          type = rowdata[j].ctx.type;
+          if (type === 'Measure'){
+            var path = rowdata[j].ctx.path;
+            var chartId = currentChartId;
+            var data = testDataSet[chartId];
+            var result = {};
+            
+            var idx;
+            var dataItem;
+            var dimensionData = data.analysisAxis;
+            var measureData = data.measureValuesGroup;
+            //get dimension data
+            for(var i = 0, len = dimensionData.length; i < len; i++){
+              dataItem = dimensionData[i];
+              if(dataItem.index == 1){
+                idx = path.dii_a1;
+                result.dii_a1 = getItemFromArray(dataItem.data, idx).join('/');
+              }else if(dataItem.index == 2){
+                idx = path.dii_a2;
+                result.dii_a2 = getItemFromArray(dataItem.data, idx).join('/');
+              }
+            }
+            
+            for(var i = 0, len = measureData.length; i < len; i++){
+              dataItem = measureData[i];
+              if(dataItem.index === (path.mg + 1)){
+                var item = dataItem.data[path.mi];
+                result.m = item.name;
+              }
+            }
+            
+            res += (result.dii_a2 == null ? "":result.dii_a2 + '/') + result.dii_a1 + '/' + result.m + '\r';
+            
+          }else if (type === 'Dimension'){
+            
+          }
+        }
+        
+        $('#deselectOriginalData').val(res);
+        
+      });
+
+        }
+    
+    function setChartOption(chartId, chartOption) {
+        var title = chartOption.title,
+            config = geoChartConfig[chartId] || {};
+        if (!title)
+            return;
+        title.text = config.title || 'Chart Title';
+    }
+
+    
+    });
+		</script>
+	</head>
+	<body>
+      <label id="chartType">Chart Type</label>
+        <select id="chartIds" name="Chart Id">
+        </select>
+        <select id="multichartIds" name="Multi Chart Id">
+        </select>
+        <button id="randomData">Random Data</button>
+        <button id="randomLocation">Random Location</button>
+        <!-- <button id="randomSchema">Random Structure</button> -->
+        <button id="ghostData">Ghost Data</button>
+        <label for="templates">Template</label>
+        <select id="templates">
+        	<option value="default" selected="selected">No template</option>
+        	<option value="standard">Standard</option>
+          <option value="flashy">Flashy</option>
+          <option value="empty_ghost">Empty Ghost</option>
+        	<option value="incomplete_ghost">Incomplete Ghost</option>
+        </select>
+		<div id="chart" style="width: 800px; height: 800px; background-color: #ffffff"></div>
+		<div style="position:absolute; top:30px; left: 820px;">
+		<div>
+			 <label for="localeLabel">locale</label>
+     	   <select id="locale">
+	        	<option value="en" selected="selected">English</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+	        	<option value="zh_CN">Chinese</option>
+      	  </select>
+		</div>
+		<div>
+		<button id="changeTemplate">Apply Customized Template</button></div>
+		<div>
+		<textarea id="templateDefs" cols="100" rows="30"></textarea>
+		</div>
+		<div><label>Event Data</label></div>
+		<div>
+		<textarea id="eventData" cols="50" rows="10"></textarea>
+		<textarea id="originalData" cols="50" rows="10"></textarea>
+		</div>
+		<div>
+			<textarea id="deselectEventData" cols="50" rows="10"></textarea>
+			<textarea id="deselectOriginalData" cols="50" rows="10"></textarea>
+		</div>
+		</div>
+	</body>
+</html>

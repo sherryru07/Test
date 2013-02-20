@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Viz Line Chart</title>
+    <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+    <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+    <script type="text/javascript" src="../../../../libs/json2.js"></script>
+    <script type="text/javascript" src="../../../../libs/sap.common.globalization.js"></script>
+    <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+    
+  </head>
+  <body>
+    <div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+    <script type='text/javascript'>
+      $(function() {
+        var Environment = sap.viz.env;
+        var CrosstableDataset = sap.viz.data.CrosstableDataset;
+        var vizcore = sap.viz.core;
+
+        Environment.initialize({
+          'log' : 'debug'
+        });
+
+        var chartOption = {
+          plotArea : {
+            
+            //'colorPallet' : ["#D9B5CA", "#AED1DA", "#DFECB2", "#FCDAB0", "#F5BCB4"]
+          },
+          title : {
+            visible : true,
+            text : 'Sample Area Chart Title'
+          }
+        };
+
+        var ds = new CrosstableDataset();
+        ds.setData({ 
+              'analysisAxis': [{
+                  'index':1,
+                  'data': [ 
+                  {
+                                  'type' : 'Dimension',
+                                  'name' : 'Country',
+                                  'values' : ['China','China', 'USA','USA', 'Canada','Canada']
+                  }, {
+                                  'type' : 'Dimension',
+                                  'name' : 'Year',
+                                  'values' : ['2001','2002', '2001','2002', '2001','2002']
+                  }      ]
+              }, {
+                  'index': 2,
+                  'data': [{
+                          'type': 'Dimension',
+                          'name': 'Product',
+                          'values': ['Car', 'Truck', 'Motorcycle']
+                      }]
+              }], 
+              'measureValuesGroup':[{
+                  'index': 1,
+                  'data': [{
+                          'type': 'Measure',
+                          'name': 'Profit',
+                          'values': [[25, 136, 58, 128, 58, 24], [159, 147, 149, 269, 38, 97], [129, 47, 49, 69, 33, 47] ]
+                      }, {
+                          'type': 'Measure',
+                          'name': 'Revenue',
+                          'values': [[50, 272, 116, 256, 116, 48], [300, 247, 249, 369, 68, 197], [229, 147, 149, 169, 133, 147]]
+                      }]
+              }]});
+
+        var dataFeeding = [
+                           {
+                               'feedId'   : 'sap.viz.modules.line.series.color',
+                               'binding'   : {
+                                              'type' : 'analysisAxis',
+                                              'index':  2 
+                                            }
+                             },{
+
+                               'feedId'   : 'sap.viz.modules.line.dimension',                       
+                               'binding' : {
+                                            'type' :'analysisAxis',                                
+                                            'index': 1
+                                          }
+                             },{
+                               'feedId' : 'sap.viz.modules.line.valueaxis1',                      
+                               'binding' : {
+                                            'type' : 'measureValuesGroup',                                
+                                            'index':  1
+                                          }
+                             }
+
+                        ];
+
+        var line = vizcore.createViz({
+          type : 'viz/100_horizontal_area',
+          data : ds,
+          container : $('#chart'),
+          options : chartOption
+        });
+      });
+
+    </script>
+  </body>
+</html>

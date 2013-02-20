@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Tagcloud Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+	</head>
+	<body>
+		<div id="chart" style="width: 800px; height: 600px; background-color: #ffffff"></div>
+		<h3>Layout</h3>
+		<input type='radio' value='Row Layout' name='layout'/>
+		<span>Row Layout</span>
+		<input type='radio' value='Column Layout' name='layout'/>
+		<span>Column Layout</span>
+		<input type='radio' value='Wordle Layout' checked='true' name='layout'/>
+		<span>Wordle Layout</span>
+		<br />
+		<h3>Number of words</h3>
+		<input type='radio' value='10' name='datas'/>
+		<span>10</span>
+		<input type='radio' value='50' name='datas' checked='true'/>
+		<span>50</span>
+		<input type='radio' value='100' name='datas'/>
+		<span>100</span>
+		<input type='radio' value='NoFontColor' name='datas'/>
+		<span>No Font Color</span>
+		<h3>Anmiation</h3>
+		<input type='radio' value='enableDataloading' name='animation' checked='true'/>
+		<span>Enable DataLoading Animation</span>
+		<input type='radio' value='disableDataloading' name='animation'/>
+		<span>Disable DataLoading Animation</span>
+		<h3>MBC Color</h3>
+		<input type='radio' value='red' name='color'/>
+		<span>red</span>
+		<input type='radio' value='yellow' name='color'/>
+		<span>yellow</span>
+		<script type='text/javascript'>
+			$(function() {
+				var datas = {
+					words : ['China', 'USA', 'Japan', 'England', 'Hongkong', 'France', 'India', 'Thailand', 'Hawaii', 'Brazil'
+					//'China', 'USA', 'Japan', 'England', 'Hongkong','China', 'USA', 'Japan', 'England', 'Hongkong',
+					//'China', 'USA', 'Japan', 'England', 'Hongkong','China', 'USA', 'Japan', 'England', 'Hongkong',
+					//'China', 'USA', 'Japan', 'England', 'Hongkong','China', 'USA', 'Japan', 'England', 'Hongkong'
+					],
+					wordsSize : [],
+					wordsFamily : []
+				};
+				var createDataset = function(count) {
+					var result = [], wordsSize = [], wordsFamily = [];
+					for(var i = 0, len = count / 10; i < len; i++) {
+						result = result.concat(datas.words);
+					}
+
+					for(var i = 0, len = result.length; i < len; i++) {
+						wordsSize.push(Math.round(Math.random() * 20 + 1));
+						wordsFamily.push(Math.round(Math.random() * 20 + 1));
+					}
+					return {
+						'analysisAxis' : [{
+							'index' : 1,
+							'data' : [{
+								'type' : 'Dimension',
+								'name' : 'tagname',
+								'values' : result
+							}]
+						}],
+						'measureValuesGroup' : [{
+							'index' : 1,
+							'data' : [{
+								'type' : 'Measure',
+								'name' : 'tagwidth',
+								'values' : [wordsSize]
+							}]
+						}, {
+							'index' : 2,
+							'data' : [{
+								'type' : 'Measure',
+								'name' : 'tagfamily',
+								'values' : [wordsFamily]
+							}]
+						}]
+					};
+				};
+
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+					title : {
+						visible : true,
+						text : 'Tag Cloud'
+					},
+					plotArea : {
+						layout : 'Wordle',
+						selectionMode : 'single',
+						animation : {
+							dataLoading : true
+						}
+					}
+				};
+
+				var ds = new CrosstableDataset();
+				var d = createDataset(50);
+				d.measureValuesGroup[0].data[0].values[0] = [6, 5, 2, 2, 21, 5, 10, 13, 13, 12, 7, 8, 21, 1, 21, 20, 20, 18, 5, 8, 7, 4, 9, 21, 21, 8, 3, 3, 14, 9, 19, 10, 16, 20, 14, 17, 21, 15, 12, 16, 21, 9, 8, 14, 20, 4, 2, 4, 15, 4];
+				d.measureValuesGroup[1].data[0].values[0] = [15, 11, 14, 16, 3, 2, 5, 12, 9, 14, 9, 15, 4, 12, 14, 5, 13, 19, 18, 7, 7, 5, 1, 12, 20, 13, 5, 19, 5, 15, 15, 2, 13, 12, 13, 7, 11, 14, 14, 12, 2, 14, 8, 16, 20, 14, 14, 12, 11, 21];
+				ds.setData(d);
+
+				var tagcloud = vizcore.createViz({
+					type : 'viz/tagcloud',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+
+				$('input:radio').click(function() {
+					switch(this.value) {
+						case 'Row Layout':
+							chartOption.plotArea.layout = 'Row';
+							break;
+						case 'Column Layout':
+							chartOption.plotArea.layout = 'Column';
+							break;
+						case 'Wordle Layout':
+							chartOption.plotArea.layout = 'Wordle';
+							break;
+						case '10':
+						case '50':
+						case '100':
+							ds.setData(createDataset(parseInt(this.value)));
+							break;
+						case 'NoFontColor':
+							var d = createDataset(50);
+							d.measureValuesGroup = [d.measureValuesGroup[0]]; 
+							ds.setData(d);
+							break;
+						case 'enableDataloading':
+							chartOption.plotArea.animation.dataLoading = true;
+							break;
+						case 'disableDataloading':
+							chartOption.plotArea.animation.dataLoading = false;
+							break;
+						case 'red':
+							chartOption.plotArea.startColor = 'red';
+							break;
+						case 'yellow':
+							chartOption.plotArea.endColor = 'yellow';
+							break;
+					}
+					$('#chart').empty();
+					tagcloud = vizcore.createViz({
+						type : 'viz/tagcloud',
+						data : ds,
+						container : $('#chart'),
+						options : chartOption
+					});
+				});
+				
+			});
+
+		</script>
+	</body>
+</html>

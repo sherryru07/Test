@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Demo Customlabel</title>
+    <meta name="author" content="I052128" />
+    <!-- Date: 2012-12-26 -->
+    <script type="text/javascript" src="../../libs/d3.v2.js"></script>
+    <script type="text/javascript" src="../../libs/jquery.js"></script>
+    <script type="text/javascript" src="../../libs/jquery-ui-1.8.21.custom.min.js"></script>
+    <script type="text/javascript" src="../../libs/json2.js"></script>
+    <script type="text/javascript" src="../../libs/sap.viz.js"></script>
+    <link rel="stylesheet" type="text/css" href="resources/css/smoothness/jquery-ui-1.8.14.custom.css" />
+    <script type="text/javascript" src="resources/data.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        var Environment = sap.viz.env;
+        var CrosstableDataset = sap.viz.data.CrosstableDataset;
+        var vizcore = sap.viz.core;
+        var chartOption = {
+          title : {
+            visible : true,
+            text : 'Customlabel Demo Chart'
+          },
+          colorLegend : {
+            visible : true
+          }
+        };
+
+        var ds = new CrosstableDataset();
+        ds.setData(data);
+        
+        var pieds = new CrosstableDataset();
+        pieds.setData(piedata);
+        pieds.info({
+          'type': 'customlabel',
+          'value' : [{
+            'name': 'Country',
+            'mapping': {
+              'China': {
+                'type': 'string',
+                'val': 'CHINA'
+              }
+            } 
+          }]
+        });
+        
+        var boxds = new CrosstableDataset();
+        boxds.setData(boxplotdata);
+        boxds.info({
+          'type': 'customlabel',
+          'value' : [{
+            'name': 'Country',
+            'mapping': {
+              'China': {
+                'type': 'string',
+                'val': 'CHINA'
+              }
+            } 
+          }]
+        });
+        
+        boxds.info({
+          'type': 'customlabel',
+          'value' : [{
+            'name': 'Products',
+            'mapping': {
+              'Car': {
+                'type': 'string',
+                'val': 'CAR'
+              }
+            } 
+          }]
+        });
+        
+        var waterfallds = new CrosstableDataset();
+        waterfallds.setData(waterfalldata);
+        waterfallds.info({
+          'type': 'customlabel',
+          'value' : [{
+            'name': 'Category',
+            'mapping': {
+              'General Admin': {
+                'type': 'string',
+                'val': 'GENERAL ADMIN'
+              }
+            } 
+          }]
+        });
+        
+        var treemapds = new CrosstableDataset();
+        treemapds.setData(treemapdata);
+        treemapds.info({
+          'type': 'customlabel',
+          'value' : [{
+            'name': 'Country',
+            'mapping': {
+              'China': {
+                'type': 'string',
+                'val': 'CHINA'
+              }
+            } 
+          }]
+        });
+        
+        var heatmapds = new CrosstableDataset();
+        heatmapds.setData(heatmapdata);
+        heatmapds.info({
+          'type': 'customlabel',
+          'value' : [{
+            'name': 'Product',
+            'mapping': {
+              'Car': {
+                'type': 'string',
+                'val': 'CAR'
+              }
+            } 
+          }, {
+            'name': 'Country',
+            'mapping': {
+              'China': {
+                'type': 'string',
+                'val': 'CHINA'
+              }
+            }
+          }]
+        });
+        
+        var radards = new CrosstableDataset();
+        radards.setData(radardata);
+        radards.info({
+          'type': 'customlabel',
+          'value' : [{
+            'name': 'Model',
+            'mapping': {
+              '777-200LR': {
+                'type': 'string',
+                'val': '777/200LR'
+              }
+            } 
+          },{
+            'name': 'Route',
+            'mapping': {
+              'VHHH-ZBAA': {
+                'type': 'string',
+                'val': 'VHHH-ZBAA-CUS'
+              }
+            } 
+          }]
+        });
+        
+        var chart = vizcore.createViz({
+          type : 'viz/column',
+          data : ds,
+          container : $('#chart'),
+          options : chartOption
+        });
+        
+        $("#chart").resizable();
+        $('#chart').bind('resizestop', function(event, ui) {
+          if(chart) {
+            chart.size({
+              'width' : $('#chart').width(),
+              'height' : $('#chart').height()
+            });
+          }
+        });
+    
+    $('#switchbar').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+          chart = vizcore.createViz({
+            type : 'viz/bar',
+            data : ds,
+            container : $('#chart'),
+            options : chartOption
+          });
+        });
+        
+        $('#switchcolumn').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+          chart = vizcore.createViz({
+            type : 'viz/column',
+            data : ds,
+            container : $('#chart'),
+            options : chartOption
+          });
+        });
+    
+    $('#switchmultiple').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+      chartOption.multiLayout = {
+      'numberOfDimensionsInColumn' : 1
+      };
+          chart = vizcore.createViz({
+            type : 'viz/multi_bar',
+            data : ds,
+            container : $('#chart'),
+            options : chartOption
+          });
+        });
+
+    
+    $('#switchmultiple2').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+      chartOption.multiLayout = {
+      'numberOfDimensionsInColumn' : 0
+      };
+          chart = vizcore.createViz({
+            type : 'viz/multi_bar',
+            data : ds,
+            container : $('#chart'),
+            options : chartOption
+          });
+        });
+        
+       $('#switchpie').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+          var option = {
+            'dataLabel' : {
+              'visible': true
+            }
+          };
+          chart = vizcore.createViz({
+            type : 'viz/pie',
+            data : pieds,
+            container : $('#chart'),
+            options : option
+          });
+        });
+        
+        $('#switchboxplot').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+          chart = vizcore.createViz({
+            type : 'viz/boxplot',
+            data : boxds,
+            container : $('#chart'),
+            options : chartOption
+          });
+        });
+        
+        $('#switchwaterfall').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+          chart = vizcore.createViz({
+            type : 'viz/waterfall',
+            data : waterfallds,
+            container : $('#chart'),
+            options : chartOption
+          });
+        });
+        
+        $('#switchtreemap').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+          chart = vizcore.createViz({
+            type : 'viz/treemap',
+            data : treemapds,
+            container : $('#chart'),
+            options : chartOption
+          });
+        });
+        
+        $('#switchheatmap').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+          chart = vizcore.createViz({
+            type : 'viz/heatmap',
+            data : heatmapds,
+            container : $('#chart'),
+            options : chartOption
+          });
+        });
+        
+        $('#switchradar').click(function() {
+          if(chart) {
+            chart.destroy();
+          }
+          chart = vizcore.createViz({
+            type : 'viz/radar',
+            data : radards,
+            container : $('#chart'),
+            options : chartOption
+          });
+        });
+      });
+
+    </script>
+  </head>
+  <body>
+    <div>
+    <button id="switchbar">
+      Switch to Bar
+    </button>
+    <button id="switchcolumn">
+      Switch to Column
+    </button>
+  <button id="switchmultiple">
+      Switch to MultiBar
+    </button>
+  <button id="switchmultiple2">
+      Switch to MultiBar in Row
+    </button>
+  <button id="switchboxplot">
+      Switch to Boxplot
+  </button>
+  <button id="switchpie">
+      Switch to Pie
+  </button>
+  </div>
+  <div>
+    <button id="switchwaterfall">
+      Switch to Waterfall
+  </button>
+  <button id="switchheatmap">
+      Switch to HeatMap
+  </button>
+  <button id="switchtreemap">
+      Switch to Treemap
+  </button>
+  <button id="switchradar">
+      Switch to Radar
+  </button>
+  </div>
+    <div id="chart" style="width: 800px; height: 400px; background-color: #ffffff"/>
+
+  </body>

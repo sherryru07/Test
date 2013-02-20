@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>TreeMap</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+	</head>
+	<body>
+		<div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>		
+		<script type='text/javascript'>			
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {						
+                      padding : [ 0, 0, 0, 0 ],
+                        title : {
+                            text : 'Regular TreeMap Demo',
+                            visible : true
+                        },
+                      tooltip:{visible:true},
+					};
+				var ds = new CrosstableDataset();
+				ds.setData({
+      'analysisAxis': [{
+    
+          'index' : 1,
+          'data' : [{
+            'type' : 'Dimension',
+            'name' : 'Region',
+            'values' : ['East','East','East','East','East','East','West','West','West','West','West','West','West','West','West','West','West',]
+          },{
+            'type' : 'Dimension',
+            'name' : 'Continent',
+            'values' : ['Asia','Asia','Asia','Asia','Asia','Asia','Europe','Europe','Europe','Europe','Europe','Europe','America','America','America','America','America',]
+          },{
+            'type' : 'Dimension',
+            'name' : 'Country',
+            'values' : ['China','China','China','Japan','Japan','Japan','France','France','France','Germany','Germany','Germany','Canada','Canada','Canada','USA','USA',]
+          },{
+            'type' : 'Dimension',
+            'name' : 'Year',
+            'values' : ['2011','2010','2009','2011','2010','2009','2011','2010','2009','2011','2010','2009','2011','2010','2009','2011','2010',]
+          }]
+        }], 
+      'measureValuesGroup': [{
+              'index': 1,
+              'data': [{
+                      'type': 'Measure',
+                      'name': 'Margin',
+                      'values': [[23,15,12,4,2,2,10,5,5,14,8,6,9,5,5,25,82,]]
+                  }]
+          },{
+              'index': 2,
+              'data': [{
+                      'type': 'Measure',
+                      'name': 'Volume',
+                      'values': [[11000,6800,4300,1520,790,710,4120,2070,1720,6210,3570,2220,3610,2100,1580,12752,7978,]]
+                  }]
+          }
+        ]
+      });
+
+				var chart = vizcore.createViz({
+					  type : 'viz/treemap',
+					  data : ds,
+					  container : $('#chart'),
+					  options : chartOption
+					});
+				    chart.on('selectData', function ( evt ) {
+				        
+				     }, null);
+
+			});
+
+		</script>
+	
+	</body>
+</html>

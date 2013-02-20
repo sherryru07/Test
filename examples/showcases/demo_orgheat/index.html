@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<title>Tree Chart</title>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../libs/sap.viz.js"></script>
+		<script type="text/javascript" src="data.js"></script>
+		<script type="text/javascript" src="orgheat.js"></script>
+		<script type="text/javascript" src="table2tree.js"></script>
+		<style type="text/css">
+			.node circle {
+				cursor: pointer;
+				fill: #fff;
+				stroke: steelblue;
+				stroke-width: 1.5px;
+			}
+
+			.node text {
+				font-size: 11px;
+			}
+
+			path.link {
+				fill: none;
+				stroke: #ccc;
+				stroke-width: 1.5px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<div id="chart" style="width: 800px; height: 600px; background-color: #ffffff"></div>
+		<label>Size Binding</label>
+		<select id="sizebinding">
+        	<option value="default" selected="selected">NA</option>
+        	<option value="number">number</option>
+        	<option value="sales">sales</option>
+			<option value="profit">profit</option>
+        </select>
+		<label>Color Binding</label>
+		<select id="colorbinding">
+        	<option value="default" selected="selected">NA</option>
+        	<option value="number">number</option>
+        	<option value="sales">sales</option>
+			<option value="profit">profit</option>
+        </select>
+		<label>Compare Binding</label>
+		<select id="textbinding">
+        	<option value="default" selected="selected">NA</option>
+        	<option value="number">number</option>
+        	<option value="sales">sales</option>
+			<option value="profit">profit</option>
+        </select>
+		<label>Shape</label>
+		<select id="shape">
+        	<option value="circle" selected="selected">circle</option>
+        	<option value="square">square</option>
+        </select>
+		<script type="text/javascript">
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+				var chart;
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+					title : {
+						visible : true,
+						text : 'An Organizational Heat Chart'
+					},
+					orgheat : {
+						binding : {},
+						shape : "circle"
+					},
+					colorLegend : {
+						visible : false
+					},
+					sizeLegend : {
+						visible : false
+					}
+				};
+
+				var ds = new CrosstableDataset();
+				ds.setData(data);
+				
+				var chart = vizcore.createViz({
+					type : 'riv/orgheat',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+				
+				$("#sizebinding").change(function() {
+					bindingChange();
+				});
+				
+				$("#colorbinding").change(function() {
+					bindingChange();
+				});
+				
+				$("#textbinding").change(function() {
+					bindingChange();
+				});
+				
+				$("#shape").change(function() {
+					bindingChange();
+				});
+				
+				function bindingChange() {
+					$("#chart").empty();
+					chartOption.orgheat.binding.size = $("#sizebinding").attr('value');
+					
+					if($("#sizebinding").attr('value') !== "default") {
+						chartOption.sizeLegend.visible = true;
+					} else {
+						chartOption.sizeLegend.visible = false;
+					}
+					
+					chartOption.orgheat.binding.color = $("#colorbinding").attr('value');
+					if($("#colorbinding").attr('value') !== "default") {
+						chartOption.colorLegend.visible = true;
+					} else {
+						chartOption.colorLegend.visible = false;
+					}
+					
+					chartOption.orgheat.binding.text = $("#textbinding").attr('value');
+					chartOption.orgheat.shape = $("#shape").attr('value');
+					//TODO : Add Dot Legend
+					
+					chart = vizcore.createViz({
+						type : 'riv/orgheat',
+						data : ds,
+						container : $('#chart'),
+						options : chartOption
+					});
+				}
+
+			})
+		</script>
+	</body>
+</html>

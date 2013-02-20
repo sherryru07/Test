@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Cross Table Demo</title>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		<script type="text/javascript" src="libs/jquery.min.js"></script>
+		<script type="text/javascript" src="libs/kendo.web.min.js"></script>
+		<script type="text/javascript" src="libs/beautify.js"></script>
+		<script type="text/javascript" src="libs/codemirror.js"></script>
+		<script type="text/javascript" src="crossTableBuilder.js"></script>
+		<script type="text/javascript" src="main.js"></script>
+		<link href="resources/table.css" rel="stylesheet" />
+		<link href="resources/kendo.common.min.css" rel="stylesheet">
+		<link href="resources/kendo.default.min.css" rel="stylesheet">
+		<link href="resources/offline.css" rel="stylesheet">
+		<link href="resources/codemirror.css" rel="stylesheet">
+		<body>
+			<div id="control" style="width: 40%; height: 600px;  float: left; background-color: #ffffff">
+				<div id="treeview" style="margin: 5px;border-bottom-width: 1px; border-bottom-color: #666666"></div>
+				<div id="dataset"></div>
+				<style scoped>
+					#treeviewCol, #treeviewRow, #treeviewMulti {
+						float: left;
+						width: 220px;
+					}
+					.demo-section {
+						width: 500px;
+					}
+					.demo-section:after {
+						content: ".";
+						display: block;
+						height: 0;
+						clear: both;
+						visibility: hidden;
+					}
+				</style>
+			</div>
+			<div id="chart" style="width: 60%; height: 600px; float: left; background-color: #ffffff"></div>
+			<div id="log" style="width: 100%; height: 30px; float: left; background-color: #ffffff; color:red"></div>
+			<script type="text/javascript"></script>
+		</body>
+</html>

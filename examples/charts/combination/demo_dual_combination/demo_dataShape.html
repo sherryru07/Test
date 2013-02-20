@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Dual Combination Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+	</head>
+	<body>
+		<div id="chart1" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+		<div id="chart2" style="width: 600px; height: 400px; background-color: #ffffff"></div>		
+		<script type='text/javascript'>
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption1 = {
+					plotArea : {
+						dataShape : {
+							primaryAxis : ['line', 'line'],
+							secondAxis : ['bar', 'bar']
+						}
+					},
+					title : {
+					  visible : true,
+						text : 'Sample Dual Combination Chart Title'
+					}
+				};
+
+        var dataset = { 
+        		'analysisAxis': [{
+                'index':1,
+                'data': [ 
+                {
+                                'type' : 'Dimension',
+                                'name' : 'Country',
+                                'values' : ['China','China', 'USA','USA', 'Canada','Canada']
+                }, {
+                                'type' : 'Dimension',
+                                'name' : 'Year',
+                                'values' : ['2001','2002', '2001','2002', '2001','2002']
+                }      ]
+            }, {
+                'index': 2,
+                'data': [{
+                        'type': 'Dimension',
+                        'name': 'Product',
+                        'values': ['Car', 'Truck', 'Motorcycle']
+                    }]
+            }], 
+            'measureValuesGroup':[
+			{
+                'index': 1,
+                'data': [{
+                        'type': 'Measure',
+                        'name': 'Profit',
+                        'values': [[25, 136, 58, 128, 58, 24], [159, 147, 149, 269, 38, 97], [129, 47, 49, 69, 33, 47] ]
+                    }/*, {
+                        'type': 'Measure',
+                        'name': 'Revenue',
+                        'values': [[50, 272, 116, 256, 116, 48], [300, 247, 249, 369, 68, 197], [229, 147, 149, 169, 133, 147]]
+                    }*/]
+            },
+			{
+                'index': 2,
+                'data': [{
+                        'type': 'Measure',
+                        'name': 'Cost',
+                        'values': [ [59, 47, 90, 90, 58, 8], [49, 69, 32, 12, 43, 83], [18, 97, 2, 56, 3, 3]]
+                    }/*,{
+                        'type' : 'Measure',
+                        'name' : 'Tax',
+                        'values' : [[99, 36, 8, 28, 27, 7], [5, 69, 8, 8, 9, 4] , [3, 18, 7, 10, 15, 12]]
+                }*/]
+            }
+			]};
+				//get all data from feeding
+				//when we support auto feeding from dataset, here we can start auto feeding
+				var ds = new CrosstableDataset();
+				ds.setData(dataset);
+
+				//TODO How to define feeding API?
+				var chart1 = vizcore.createViz({
+					type : 'viz/dual_combination',
+					data : ds,
+					container : $('#chart1'),
+					options : chartOption1
+				});
+
+//				chart.on('initialized', function ( evt ) {
+//				  // Do something cool
+//				  //alert('animation done')
+//				});
+				var chartOption2 = {
+					plotArea : {
+						dataShape : {
+							primaryAxis : ['bar', 'bar'],
+							secondAxis : ['bar', 'bar']
+						}
+					},
+					title : {
+					  visible : true,
+						text : 'Sample Dual Combination Chart Title'
+					}
+				};
+				var chart2 = vizcore.createViz({
+					type : 'viz/dual_combination',
+					data : ds,
+					container : $('#chart2'),
+					options : chartOption2
+				});				
+			});
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Visualization Service</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="Gang Tao">
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../libs/sap.viz.js"></script>
+		<script type="text/javascript" src="libs/jslinq.js"></script>
+		<script type="text/javascript" src="libs/tb2ctb.js"></script>
+		<script type="text/javascript" src="libs/bootstrap.min.js"></script>
+		<link href="css/bootstrap.min.css" rel="stylesheet" />
+		<link href="css/bootstrap-responsive.min.css" rel="stylesheet" />
+		<style type="text/css">
+			body {
+				padding-top: 60px;
+				padding-bottom: 40px;
+			}
+			.timeplay {
+				height: 500px;
+				border: 1px solid #CCCCCC;
+				border-radius: 3px;
+				overflow: hidden;
+			}
+			.control {
+				height: 30px;
+			}
+			.chart {
+				height: 460px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="brand" href="#"> Visualization Time Player </a>
+					<ul class="nav">
+						<li class="dropdown">
+							<a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#"> Chart Type <b class="caret"></b> </a>
+							<ul id="typeMenu" class="dropdown-menu" role="menu" aria-labelledby="dLabel"></ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="timeplay span8">
+				<div id="chart" class="chart span8"></div>
+				<div class="control span6">
+					<div id="btnPlay" class="icon-play"></div>
+					<div id="btnPause" class="icon-pause"></div>
+					<div id="btnStop" class="icon-stop"></div>
+					<input id="timeRange" type="range" min="0" max="50" value="0" />
+					<span id="timeLable" class="label"></span>
+				</div>
+			</div>
+		</div>
+		<script type='text/javascript'>
+			var Environment = sap.viz.env;
+			var CrosstableDataset = sap.viz.data.CrosstableDataset;
+			var vizcore = sap.viz.core;
+			var chart = undefined;
+			var timer;
+			var inPlay = false;
+			var typeList = ["viz/bar", "viz/pie", "viz/bubble", "viz/area","viz/3d_column","viz/treemap","viz/radar","viz/boxplot"];
+
+			Environment.initialize({
+				'log' : 'debug'
+			});
+
+			$('.dropdown-toggle').dropdown();
+
+			$.getJSON("http://VIZDEV:Password2@shghana2.dhcp.pgdev.sap.corp:8000/viz/main.xsjs?jsoncallback=?", {
+				table : "NATIONS",
+				action : "getData"
+			}, function(data) {
+				//Get Time Scale
+				var query = JSLINQ(data).OrderBy(function(item) {
+					return item["YEAR"];
+				}).Distinct(function(item) {
+					return item["YEAR"];
+				});
+				var times = query.items;
+				var count = 0;
+				var d0 = getDatabyTime(data, times[0]);
+
+				var menu = d3.select("#typeMenu").selectAll("li").data(typeList).enter().append("li").append("a").text(function(d) {
+					return d;
+				}).on("click", function(d) {
+					$("#chart").empty();
+					var axis1FeedData, axis2FeedData, mgsFeedData;
+					chartType = d;
+					if (chartType === "viz/bar" || chartType === "viz/pie" || chartType === "viz/3d_column") {
+						axis1FeedData = ["REGION"];
+						axis2FeedData = [];
+						mgsFeedData = [["INCOME"]];
+					} else if (chartType === "viz/area") {
+						axis1FeedData = ["COUNTRY"];
+						axis2FeedData = [];
+						mgsFeedData = [["LIFEEXPECTANCY"]];
+					} else if (chartType === "viz/treemap") {
+						axis1FeedData = ["REGION"];
+						axis2FeedData = [];
+						mgsFeedData = [["LIFEEXPECTANCY"],["INCOME"]];
+					} else if (chartType === "viz/radar") {
+						axis1FeedData = ["REGION"];
+						axis2FeedData = [];
+						mgsFeedData = [["POPULATION"]];
+					} else if (chartType === "viz/boxplot") {
+						axis1FeedData = ["REGION"];
+						axis2FeedData = ["COUNTRY"];
+						mgsFeedData = [["INCOME"]];
+					} else {
+						axis1FeedData = ["COUNTRY"];
+						axis2FeedData = [];
+						mgsFeedData = [["INCOME"], ["LIFEEXPECTANCY"], ["POPULATION"]];
+					}
+
+					var td0 = table2Crosstable(d0.items, axis1FeedData, axis2FeedData, mgsFeedData);
+
+					//prepare dataset
+					var i = 0;
+					length = times.length, dataByTime = [];
+					for (; i < length; i++) {
+						var d = getDatabyTime(data, times[i]);
+						var td = table2Crosstable(d.items, axis1FeedData, axis2FeedData, mgsFeedData);
+						var ds = new CrosstableDataset();
+						ds.setData(td);
+						dataByTime.push(ds);
+					}
+
+					//Sync Scale & Range
+					var option = {};
+					chart = showViz(chartType, td0, option);
+				});
+
+				$("#timeRange").attr("max", times.length - 1);
+
+				$("#btnPlay").click(function() {
+					play();
+				});
+
+				$("#btnPause").click(function() {
+					pause();
+				});
+
+				$("#btnStop").click(function() {
+					stop();
+				});
+
+				$("#timeRange").change(function() {
+					if (!inPlay) {
+						goto($("#timeRange").attr("value"));
+					}
+				});
+
+				function play() {
+					inPlay = true;
+					timer = setInterval(updateChart, 100);
+				}
+
+				function pause() {
+					inPlay = false;
+					clearInterval(timer);
+				}
+
+				function stop() {
+					inPlay = false;
+					count = 0;
+					clearInterval(timer);
+				}
+
+				function goto(index) {
+					count = index;
+					chart.data(dataByTime[count]);
+					$("#timeLable").text(times[count]);
+					$("#timeRange").attr("value", count);
+				}
+
+				function updateChart() {
+					count++;
+					if (count === length) {
+						stop()
+						return;
+					}
+					chart.data(dataByTime[count]);
+					$("#timeLable").text(times[count]);
+					$("#timeRange").attr("value", count);
+				}
+
+			});
+
+			function getDatabyTime(data, time) {
+				var d = JSLINQ(data).Where(function(item) {
+					return item["YEAR"] == time;
+				}).Select(function(item) {
+					return item;
+				});
+
+				return d;
+			}
+
+			function showViz(type, data, option) {
+				if (!option.plotArea) {
+					option.plotArea = {};
+				}
+				if (!option.plotArea.animation) {
+					option.plotArea.animation = {};
+				}
+
+				option.plotArea.animation.dataUpdating = false;
+				option.plotArea.animation.dataLoading = false;
+				option.sizeLegend = {};
+				option.sizeLegend.visible = false;
+				var ds = new CrosstableDataset();
+				ds.setData(data);
+
+				chart = vizcore.createViz({
+					type : type,
+					data : ds,
+					container : $('#chart'),
+					options : option
+				});
+
+				return chart;
+			}
+		</script>
+	</body>
+</html>

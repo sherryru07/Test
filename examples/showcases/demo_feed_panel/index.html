@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Feed Panel</title>
+		<script type="text/javascript" src="libs/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="libs/jquery-ui-1.8.23.custom.min.js"></script>
+		<script type="text/javascript" src="feedPanel.js"></script>
+		<link href="resources/jquery.ui.all.css" rel="stylesheet" />
+		<link href="resources/demos.css" rel="stylesheet" />
+		<style>
+			h3 {
+				padding: .2em;
+				margin: 0;
+			}
+			.feed {
+				float: left;
+				width: 500px;
+				margin-right: 2em;
+			}
+			/* style the list to maximize the droppable hitarea */
+			.feed ol {
+				margin: 0;
+				padding: 1em 0 1em 3em;
+			}
+			
+			.feed ul {
+				margin: 0;
+				padding: 1em 0 1em 3em;
+			}
+			
+		</style>
+		<script type="text/javascript">
+			$(function() {
+				var data = {
+					feedTo : [{
+						name : "D1",
+						type : "Dimension",
+						acceptMND : true
+					}, {
+						name : "D2",
+						type : "Dimension",
+						acceptMND : false
+					}, {
+						name : "M1",
+						type : "Measure"
+					}],
+					feedFrom : [{
+						name : "d1",
+						type : "Dimension"
+					}, {
+						name : "d2",
+						type : "Dimension"
+					}, {
+						name : "m1",
+						type : "Measure"
+					}, {
+						name : "m2",
+						type : "Measure"
+					}]
+				};
+				var callback = function(feed) {
+					console.log(feed);
+				}
+				feedPanel($("#panel"), data, callback);
+			});
+
+		</script>
+		<body>
+			<div id="panel" style="width: 300px; height: 500px;  float: left; background-color: #ffffff"></div>
+		</body>
+</html>

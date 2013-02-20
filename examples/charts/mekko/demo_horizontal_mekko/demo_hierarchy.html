@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Viz Stacked Bar Chart</title>
+    <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+    <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+    <script type="text/javascript" src="../../../../libs/json2.js"></script>
+    <script type="text/javascript" src="../../../../libs/sap.common.globalization.js"></script>
+    <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        
+  </head>
+  <body>
+    <div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+    <script type='text/javascript'>
+    $(function() {
+         Environment = sap.viz.env;
+         CrosstableDataset = sap.viz.data.CrosstableDataset;
+         vizcore = sap.viz.core;
+        
+        Environment.initialize({
+            'log': 'debug'
+        });
+        
+         chartOption = {
+          plotArea: {
+            //'colorPallet' : ["#D9B5CA", "#AED1DA", "#DFECB2", "#FCDAB0", "#F5BCB4"]
+            },
+            title: {
+              visible : true,
+              text: 'Sample Mekko Chart Title'
+            }
+        };
+        
+         ds = new CrosstableDataset();
+         ds.setData({"analysisAxis":[{"index":1,"data":[{"name":"COUNTRY","values":["France","France","France","France","France","France","Germany","Germany","Germany","Germany","Germany","Germany"]},
+                                                        {"name":"YEAR","values":["2006","2006","2006","2007","2007","2007","2006","2006","2006","2007","2007","2007"]},
+                                                        {"name":"PRODUCT","values":["Car","Car","Truck","Car","Car","Truck","Car","Car","Truck","Car","Car","Truck"]},
+                                                        {"name":"COLOR","values":["Black","Red","Blue","Black","Red","Blue","Black","Red","Blue","Black","Red","Blue"]}]},
+                                     {"index":2,"data":[{"name":"LEVEL","values":[1,2,3]}]}],"measureValuesGroup":[{"index":1,"data":[{"name":"REVENUE1","values":[[6,5,10,2,2,7,3,5,10,2,6,11],[5,3,8,7,5,3,1,2,6,3,8,8],[3,0,2,4,1,1,9,2,2,1,1,4]]}]},
+                                                                                                                   {"index":2,"data":[{"name":"REVENUE2","values":[[20,20,25,15,18,23,7,25,30,11,25,30],[22,14,43,39,47,2,7,30,35,54,64,13],[16,0,21,36,5,10,88,46,7,0,13,55]]}]}]});
+ 
+        //TODO How to define feeding API?
+        //var bar = new HtmlViz('viz/stacked_bar', $('#chart'), chartOption, ds);
+        bar = vizcore.createViz({
+            type: 'viz/horizontal_mekko',
+            data: ds,
+            container: $('#chart'),
+            options: chartOption
+        });
+
+    });
+    
+    </script>
+  
+  </body>
+</html>

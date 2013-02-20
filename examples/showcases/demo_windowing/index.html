@@ -1,0 +1,641 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Windowing Testing</title>
+
+   <script type="text/javascript" src="../../libs/d3.v2.js"></script>
+
+    <script type="text/javascript" src="../../libs/jquery.js"></script>
+
+    <script type="text/javascript" src="../../libs/json2.js"></script>
+
+    <script type="text/javascript" src="../../libs/sap.viz.js"></script>
+
+    <script type="text/javascript" src="../../libs/sap.common.globalization.js"></script>
+    <meta charset="utf-8" />
+    <style type='text/css'>
+        #range
+        {
+            position: relative;
+            width: 752px;
+            height: 0px;
+            font-size: 0;
+            line-height: 0;
+            background: #fff;
+            border: 1px inset #9C9B97;
+            margin-top: -60px;
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-left: 5px;
+        }
+        #meaBox
+        {
+            position: absolute;
+            width: 752px;
+            height: 4px;
+            background: #ccc;
+            top: -2px;
+            border: 1px inset #9C9B97;
+            border-left: 0;
+            border-right: 0;
+        }
+        .mea
+        {
+            position: absolute;
+            top: -7px;
+            width: 2px;
+            height: 10px;
+            border: 3px solid #fff;
+            border-top: 13px solid #3f8e55;
+        }
+        #mea_l
+        {
+            left: 0;
+        }
+        #mea_r
+        {
+            right: 0;
+            border-top: 13px solid #ff0000;
+        }
+        #chart
+        {
+            width: 800px;
+            height: 450px;
+            background-color: #ffffff;
+        }
+        #backgroundchart
+        {
+            width: 800px;
+            height: 100px;
+            background-color: #ffffff;
+        }
+        #resizediv
+        {
+            height: 10px;
+            width: 10px;
+            left: 800px;
+            margin-top: -10px;
+            position: absolute;
+            cursor: nw-resize;
+            background-color: #ffffff;
+        }
+        .yAxis
+        {
+            position: relative;
+        }
+        #can_resize
+        {
+
+        }
+        td
+        {
+        	width: 900px;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <table>
+        <tr>
+            <td >
+                <div id="chart">
+                </div>
+                <div id="resizediv" onmousedown="resize(this,event)">
+                                    <img id="resizeimg" src = "img/resize.png"   /> 
+                    <!--<canvas id="can_resize"></canvas>-->
+               </div>
+            </td>
+            <td>
+                <div id="dataupdate" align="left">
+                    Update your data here: <a id="randomSchema" title="Random Schema" href="javascript:void(0)">
+                        Random Schema</a>
+                    <br />
+                    <textarea id="txt_data_area" cols="50" rows="20"></textarea>
+                </div>
+                <input type="button" onclick="TestData()" value="Test Data" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Please select chart type:
+                <select id="ChartType" onchange="changeChart()">
+                    <option>viz/column</option>
+                    <option>viz/dual_column</option>
+                    <option>viz/line</option>
+                    <option>viz/area</option>
+                    <option>viz/dual_line</option>
+                    <option>viz/stacked_column</option>
+                    <option>viz/100_stacked_column</option>
+                    <option>viz/combination</option>
+                    <option>viz/dual_combination</option>
+                </select>
+                Please select data update model
+                <input id='radio_change_data' name='implement_method' value='change_data' type='radio'
+                    checked="true">change data</input>
+                <input id='radio_redraw_chart' name='implement_method' value='redraw_chart' type='radio'>redraw
+                    chart</input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="backgroundchart">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id='range'>
+                    <div id='meaBox' onmousedown="change(this,event)">
+                    </div>
+                    <div id='mea_l' class='mea' onmousedown="change(this,event)">
+                    </div>
+                    <div id='mea_r' class='mea' onmousedown="change(this,event)">
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+
+                <label id='l_text' style="display: none">
+                    Left Value:
+                </label>
+                <input id='l_value' style="display: none" />
+                <label id='r_text' style="display: none">
+                    Right Value:
+                </label>
+                <input id='r_value' style="display: none" />
+                <label id='lab_yAxisMin'>
+                    yAxis min value:
+                </label>
+                <input id='yAxismin' class="yAxis" onchange="yAxisChanged()" />
+                <label id='lab_yAxisMax'>
+                    yAxis max value:
+                </label>
+                <input id='yAxismax' class="yAxis" onchange="yAxisChanged()" />
+                 <br />
+                  <br />
+                <label id='lab_yAxis2min'>
+                    yAxis2 min value:
+                </label>
+                <input id='yAxis2min' class="yAxis" onchange="yAxis2Changed()" />
+                <label id='lab_yAxis2Max'>
+                    yAxis2 max value:
+                </label>
+                <input id='yAxis2max' class="yAxis" onchange="yAxis2Changed()" />
+            </td>
+        </tr>
+    </table>
+    </form>
+</body>
+
+<script type='text/javascript'>
+var $id=function(o){return document.getElementById(o) || o;}
+var manual_data_default = {};
+var use_manual_data = false;
+var ranData={};
+var useranData = false;
+var change=function(o,e){
+	var e = e ? e : window.event;
+	if(!window.event) {e.preventDefault();}
+	var init={
+		mX: o.offsetLeft,
+		lX: $id('mea_l').offsetLeft,
+		rX: $id('mea_r').offsetLeft,
+		dX: e.clientX
+	};
+
+	document.onmousemove=function(e){
+		var e = e ? e : window.event;
+		var dist=e.clientX-init.dX,
+			len=init.mX + dist,
+			l_x=init.lX,
+			r_x=init.rX;
+		switch (o.id){
+			case 'mea_l':
+				l_x=init.lX + dist;
+				move();
+				break;
+			case 'mea_r':
+				r_x=init.rX + dist;
+				move();
+				break;
+			case 'meaBox':
+				l_x=init.lX + dist;
+				r_x=init.rX + dist;
+				move2();
+				break;
+			default: break;
+		}
+		function move(){
+		var data_test =  returnFinalData();
+			if(r_x > l_x + 40 && len>=0 && len<=$('#backgroundchart').width()-8 ) {
+				o.style.left=len+"px";
+				$id('meaBox').style.left= l_x + 'px';
+				$id('meaBox').style.width=r_x - l_x + 'px';
+				$('#l_value').val($id('mea_l').offsetLeft);
+    	        $('#r_value').val($id('mea_r').offsetLeft);
+    	        selectFunction(data_test,$id('mea_l').offsetLeft,$id('mea_r').offsetLeft);
+			}
+		};
+		function move2(){
+		var data_test =  returnFinalData();
+			if(l_x>=0 && r_x <=$('#backgroundchart').width()-8 ) {
+				o.style.left=len+"px";
+				$id('mea_l').style.left= l_x + "px";
+				$id('mea_r').style.left= r_x +"px";
+				$('#l_value').val($id('mea_l').offsetLeft);
+    	        $('#r_value').val($id('mea_r').offsetLeft);
+    	        selectFunction(data_test,$id('mea_l').offsetLeft,$id('mea_r').offsetLeft);
+			}
+		};
+	}
+	    document.onmouseup=function(){
+		document.onmousemove=null;
+		document.onmouseup=null;
+	}
+}
+</script>
+
+<script type='text/javascript' id="resize">
+var resize=function(o,e){
+	var e = e ? e : window.event;
+	if(!window.event) {
+	    e.preventDefault();
+	}
+		var init={
+		    dX: e.clientX,
+		    dY: e.clientY
+	    };
+
+	document.onmousemove=function(e){
+		var e = e ? e : window.event;
+		$('#l_value').val(e.clientX);
+		var dietX = e.clientX - init.dX;
+		var dietY =e.clientY - init.dY;
+		init.dX = e.clientX;
+		init.dY = e.clientY;
+		var chartX = barChart.size().width +dietX;
+		var chartY = barChart.size().height +dietY
+		barChart.size({width:chartX,height:chartY}); 
+        var o = document.getElementById("resizediv");
+        o.style.left = chartX+"px";
+        o.style.top =chartY+10+"px";
+	}
+	    document.onmouseup=function(){
+		document.onmousemove=null;
+		document.onmouseup=null;
+	}
+}
+</script>
+
+<script id="random schema" type="text/javascript">
+          $('#randomSchema').click(function(){
+          var Manifest = sap.viz.manifest;
+          var testDataSet = {};
+
+            var currentChartId = $('#ChartType').val();
+            var feeds = Manifest.viz.get(currentChartId).allFeeds();
+            var randomP = {
+              hierarchy : true,
+              range : 10000
+            };
+            var mfeeds = findFeeds (feeds, 'Measure');
+            var dfeeds = findFeeds (feeds, 'Dimension');
+            var feed;
+            var maxStackedDims;
+            for(var i = 0, len = mfeeds.length; i < len; i++){
+              feed = mfeeds[i];
+              if(feed.max > 0){
+                var max = (feed.max === Infinity ? 5 : feed.max);
+                var fnumber = Math.floor(getRandomNumber(feed.min, max));
+                if(fnumber > 0){
+                  randomP['mv' + feed.mgIndex] = fnumber;
+                }  
+              }
+            }
+            
+            for(var i = 0, len = dfeeds.length; i < len; i++){
+              feed = dfeeds[i];
+              maxStackedDims = (feed.maxStackedDims == undefined)? 5 : feed.maxStackedDims;
+              if(feed.max > 0){
+                randomP['aa' + feed.aaIndex] = Math.floor(getRandomNumber(1, maxStackedDims));
+                randomP['aa' + feed.aaIndex + 'Count'] = Math.floor(getRandomNumber(1, 10));
+              }
+            }
+            
+
+            $.getJSON("http://shgtgvmwin007.dhcp.pgdev.sap.corp:8800/datagen?jsoncallback=?", randomP,
+
+            function (data) {
+                testDataSet[currentChartId] = data;
+                ranData = data;
+                ds.setData(testDataSet[currentChartId]);
+                //barChart.data(ds);
+                useranData = true;
+                barChart_bk.data(ds);
+                selectFunction(data,$id('mea_l').offsetLeft,$id('mea_r').offsetLeft);
+            });
+          });
+          
+          function findFeeds (feeds, type){
+          var feed, ret = [];
+          for(var i = 0, len = feeds.length; i < len; i++){
+            feed = feeds[i];
+            if(feed.type == type){
+              ret.push(feed);
+            } 
+          }
+          return ret;
+        }
+        
+         function getRandomNumber (min, max) {
+         return parseFloat((Math.random() * (max - min + 1)).toFixed(2)) + min;
+        }
+</script>
+
+<script type="text/javascript">
+    var commdata = {};
+    var barChart = undefined;
+    var barChart_bk = undefined;
+    var _severURL = 'http://shgtgvmwin007.dhcp.pgdev.sap.corp:8800/';
+
+   var selectFunction = function (data,min,max){
+                var new_data = $.extend(true,[],data);
+                var min_value = Math.floor(min/($('#backgroundchart').width()/new_data.analysisAxis[0].data[0].values.length));
+                var max_value = Math.floor((max-1)/($('#backgroundchart').width()/new_data.analysisAxis[0].data[0].values.length));
+                for ( var i = 0 ;i<new_data.analysisAxis[0].data.length;i++)
+                {
+                    var cadv = new_data.analysisAxis[0].data[i].values;
+                    cadv.splice(max_value+1,cadv.length-max_value);
+                    cadv.splice(0,min_value);
+                }
+                for(var i = 0;i<new_data.measureValuesGroup.length;i++)
+                {
+                     var cmvg = new_data.measureValuesGroup[i];
+                     for ( var j=0; j<cmvg.data.length; j++) {
+                        var cd = cmvg.data[j];
+                            for (var k =0; k<cd.values.length; k++) {
+                            var cv = cd.values[k];
+                            cv.splice(max_value+1, cv.length-max_value);
+                            cv.splice(0,min_value);
+                        }//k
+                    }//j
+                }//i
+                loadchart(new_data);
+          };
+
+          var def_yAxisMin=0;
+          var def_yAxisMax = 800;
+          var def_yAxis2Min = 0;
+          var def_yAxis2Max= 800;
+          var CrosstableDataset = sap.viz.data.CrosstableDataset;
+          var ds = new CrosstableDataset();
+             var chartOption = {
+             xAxis : {
+                layoutInfo : {
+                width: 200,
+                height : 120
+                }
+            },
+            yAxis : {
+                scale : {
+                    fixedRange : true,
+                    minValue : def_yAxisMin,
+                    maxValue : def_yAxisMax
+                }
+           },
+            yAxis2 : {
+                scale : {
+                    fixedRange : true,
+                    minValue : def_yAxis2Min,
+                    maxValue : def_yAxis2Max
+                }
+           },
+           plotArea : {
+			animation : {
+					dataLoading : false,
+					dataUpdating : false
+				}
+		    }
+        };
+        
+        var backchartOption = {
+            yAxis : {
+                visible : false
+           },
+           legend : {
+                visible : false
+           },
+           tooltip:{
+                visible : false
+           },
+           yAxis2:{
+                visible : false
+           }
+        };
+
+
+        function loadchart(commdata_d){
+          sap.viz.core.destroyViz();
+          ds = new CrosstableDataset();
+          ds.setData(commdata_d);
+          if (barChart&&document.getElementById("radio_change_data").checked){
+				barChart.data(ds);
+		  }
+		  else{
+            if(barChart)
+            {
+                barChart.destroy();
+            }
+            var vizcore = sap.viz.core;
+            barChart = vizcore.createViz({
+			    type : $('#ChartType').val(),
+			    data : ds,
+			    container : $('#chart'),
+			    options : chartOption
+			    });
+			}
+          }
+          
+          function loadbackchart(commdata_d){
+                if(barChart_bk)
+                {
+                   barChart_bk.destroy();
+                }
+                    ds.setData(commdata_d);
+                    var vizcore = sap.viz.core;
+              		barChart_bk = vizcore.createViz({
+					type : $('#ChartType').val(),
+					data : ds,
+					container : $('#backgroundchart'),
+					options : backchartOption
+				});
+          }
+          function return_data()
+          {
+            	var data_test_new =   {'analysisAxis': [{
+                	'index': 1,
+                	'data': [{
+                        	'type': 'Dimension',
+                        	'name': 'Country',
+                        	'values': ['China', 'USA','Germany','Franch','China', 'USA','Germany','Franch']
+                   	 		}]
+            		}], 
+            		'measureValuesGroup': [{
+               		'index': 1,
+                	'data': [{
+                        'type': 'Measure',
+                        'name': 'Profit',
+                        'values': [[10, 20, 30, 40,50, 60, 70, 80]]
+                    }]
+            }]};
+            return data_test_new;
+          }
+          
+          function return_dual_data()
+          {
+                var data_test_new = {
+                "analysisAxis":[{
+                "index":1,
+                "data":[{
+                "name":"COUNTRY",
+                "values":["France","France","Germany","Germany"]},
+                {
+                "name":"YEAR",
+                "values":["2006","2007","2006","2007"]
+                }]
+                }],
+                "measureValuesGroup":[{
+                "index":1,
+                "data":[{
+                "name":"REVENUE1",
+                "values":[[42,32,40,44]]
+                }]
+                },
+                {
+                "index":2,"data":[{
+                "name":"REVENUE2",
+                "values":[[181,195,275,265]]
+                }]
+                }]};
+            return data_test_new; 
+          }
+          
+          function getdata()
+          {
+                var getdatvalue = {};
+				if($('#ChartType').val().indexOf('dual')>-1)
+				{
+				        getdatvalue = return_dual_data();
+				}
+				else
+				{
+				        getdatvalue = return_data();
+				}
+				return getdatvalue;
+          }
+          
+          function changeChart()
+          {
+            use_manual_data = false;
+            useranData=false;
+            document.getElementById("radio_change_data").checked = false;
+            document.getElementById("radio_redraw_chart").checked = true;
+            var backdata = getdata();
+            loadbackchart(backdata);
+            selectFunction(backdata,$id('mea_l').offsetLeft,$id('mea_r').offsetLeft);
+            initTextArea(backdata);
+          }
+          
+          function TestData()
+          {
+                eval('var data_manual = '+$('#txt_data_area').val());
+                manual_data_default=data_manual
+                loadbackchart(data_manual);
+                selectFunction(data_manual,$id('mea_l').offsetLeft,$id('mea_r').offsetLeft);
+                
+                use_manual_data = true;
+                useranData= false;
+          }
+          
+          function initTextArea(_backdata)
+          {
+            var datavalue = JSON.stringify(_backdata); 
+            $('#txt_data_area').val(datavalue);
+          }
+          
+          function yAxisChanged()
+          {
+                 var data_test = returnFinalData();
+                 document.getElementById("radio_change_data").checked = false;
+                 document.getElementById("radio_redraw_chart").checked = true;
+                 def_yAxisMin = $("#yAxismin").val()!=""?  $("#yAxismin").val():0;
+                 def_yAxisMax = $("#yAxismax").val()!=""?  $("#yAxismax").val():def_yAxisMax;
+                 chartOption.yAxis.scale.minValue=def_yAxisMin;
+                 chartOption.yAxis.scale.maxValue=def_yAxisMax;
+                 selectFunction(data_test,$id('mea_l').offsetLeft,$id('mea_r').offsetLeft);
+          }
+          
+          function yAxis2Changed()
+          {
+                 var data_test = returnFinalData();
+                 document.getElementById("radio_change_data").checked = false;
+                 document.getElementById("radio_redraw_chart").checked = true;
+                 def_yAxisMin = $("#yAxismin").val()!=""?  $("#yAxismin").val():0;
+                 def_yAxisMax = $("#yAxismax").val()!=""?  $("#yAxismax").val():def_yAxisMax;
+                 def_yAxis2Min = $("#yAxis2min").val()!=""?  $("#yAxis2min").val():0;
+                 def_yAxis2Max = $("#yAxis2max").val()!=""?  $("#yAxis2max").val():def_yAxis2Max;
+                 chartOption.yAxis.scale.minValue=def_yAxisMin;
+                 chartOption.yAxis.scale.maxValue=def_yAxisMax;
+                 chartOption.yAxis2.scale.minValue=def_yAxis2Min;
+                 chartOption.yAxis2.scale.maxValue=def_yAxis2Max;
+                 selectFunction(data_test,$id('mea_l').offsetLeft,$id('mea_r').offsetLeft);
+          }
+          
+          $(".yAxis").keydown(function(event) {
+                // Allow: backspace, delete, tab, escape, and enter
+                if ( event.keyCode == 46 || event.keyCode == 110 || event.keyCode == 109 || event.keyCode == 190|| event.keyCode == 189|| event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || 
+                    (event.keyCode == 65 && event.ctrlKey === true) || 
+                 (event.keyCode >= 35 && event.keyCode <= 39)) {
+                 return;
+             }
+             else {
+                  if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+                     event.preventDefault(); 
+                    }   
+             }
+             });
+             
+             function returnFinalData()
+             {
+                 var data_test = getdata();
+          		 if(use_manual_data ==true)
+		         {
+		            data_test = manual_data_default;
+		         }
+		         if(useranData == true)
+		         {
+		            data_test = ranData;
+		         }
+		         return data_test;
+             }
+</script>
+
+<script type="text/javascript" id="pageloading">
+$(document).ready(function() {
+				var data_test =  getdata();
+                loadchart(data_test);
+                var backdata = getdata()
+				loadbackchart(backdata);
+				initTextArea(backdata);
+				document.getElementById("resizeimg").draggable = false;  
+				document.getElementById("resizeimg").onmousedown = function(event) 
+				{                
+				    event.preventDefault();                
+				    return false;              
+				};
+});
+</script>
+
+</html>

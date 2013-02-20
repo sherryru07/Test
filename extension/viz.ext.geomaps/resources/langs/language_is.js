@@ -1,0 +1,1 @@
+sap.viz.lang.langManager.register({id:'is',value: {IDS_GEOBUBBLE:"_i_Geo Bubble Chart_s_pseudoloc_",IDS_GEOPIE:"_i_Geo Pie Chart_s_pseudoloc_",IDS_CHOROPLETH:"_i_Geo Choropleth Chart_s_pseudoloc_",IDS_MULTIGEOBUBBLE:"_i_Multiple Geo Bubble Chart_s_pseudoloc_",IDS_MULTICHOROPLETH:"_i_Multiple Geo Choropleth Chart_s_pseudoloc_",}});

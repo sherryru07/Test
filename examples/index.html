@@ -1,0 +1,131 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Demo Charts</title>
+	<script type="text/javascript" src="../libs/jquery.js"></script>
+	<script type="text/javascript" src="../libs/d3.v2.js"></script>
+	<script type="text/javascript" src="../libs/sap.common.globalization.js" ></script>
+	<script type="text/javascript" src="../libs/sap.viz.js"></script>
+	<!-- Extension Charts -->
+	<script type="text/javascript" src="../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+	<script type="text/javascript" src="../extension/viz.ext.predictive/libs/sap.viz.ext.pa.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="resources/css/smoothness/jquery-ui-1.8.14.custom.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/style.css">
+	<script src="resources/js/jquery-ui-1.8.23.min.js"></script>
+	<script src='resources/js/charts.js'></script>
+	<script type="text/javascript" src="resources/js/main.js"></script>
+		<style type="text/css">
+		
+		</style>
+		<script type="text/javascript">
+		$(document).ready(function(){
+			sap.viz.TemplateManager.loadPath=["../resources/templates/"];
+			sap.viz.lang.langManager.loadPath=["../resources/langs/"];
+			sap.viz.GeoManager.resourcePath('../extension/viz.ext.geomaps/resources');
+			var Environment = sap.viz.env;
+      var CrosstableDataset = sap.viz.data.CrosstableDataset;
+      var vizcore = sap.viz.core;
+      var Manifest = sap.viz.manifest;
+      var TemplateManager = sap.viz.TemplateManager;
+      var locale = $("#locale");    
+      locale.change(function() {
+        Environment.initialize({
+          locale:this.value
+        });
+      });
+      sap.viz.lang.langManager.addListener({
+           fn: function(){
+              chartMap =[];
+              multichartMap =[];
+              $('#chartIds').find('option').remove();
+              $('#multichartIds').find('option').remove();
+              
+                Manifest.viz.each(function(obj, id) {
+                 if(obj["abstract"] !== true){
+                   if(id.indexOf('riv/multi') === 0){
+
+                     multichartMap.push({
+                         index: id,
+                         value: obj.name
+                     });
+                   }else{
+                     
+                     chartMap.push({
+                         index: id,
+                         value: obj.name
+                     });
+                   }
+                  }
+                });
+                 chartMap.sort(function(a,b){
+                     return a.value > b.value ? 1: -1;
+                 });
+                 multichartMap.sort(function(a,b){
+                     return a.value > b.value ? 1: -1;    
+                 });
+
+                 for( i = 0, length = chartMap.length; i < length; i++){
+                     $("#chartIds").append('<option value=' + chartMap[i].index + '> ' + (i + 1) + ', ' + chartMap[i].value + '</option>');
+                 }
+                 for( i = 0, length = multichartMap.length; i < length; i++){
+                     $("#multichartIds").append('<option value=' + multichartMap[i].index + '> ' + (i + 1) + ', ' + multichartMap[i].value + '</option>');
+                 }
+            },
+            scope: this
+        });
+		})
+		</script>
+	</head>
+	<body>
+<div id="banner">
+	<div id="header" style="display:inline-block;left:0;position:relative;float:left;">
+        
+		<img src="resources/images/logo.png" style="width:120px;height:32px;" alt="SAPViz">
+	</div>
+<h2 id="chart_title" style="position:relative;margin-top:0;margin-bottom:0;text-align: center;">Chart</h2>
+</div>
+<div id="main">
+
+	<div id="chart_index">
+		
+		<ul>
+		</ul>
+		<div id="help" style="">
+			<p><img src="resources/images/multi_chart_icon.png" />Multiple Layout  available in this chart. </p>
+      <p><img src="resources/images/info_icon.png" />Geographic charts only shows when demo runs in the web server</p>
+			<p>SAP CVOM 2012 Preview</p>
+		</div>
+	</div>
+	<div id="splitter">
+		<!-- <div id="splitBtn" style="position:fixed;top:500px;width:7px;height:10px;background-image:url(resources/images/vsplit_arr.png);"> </div>-->
+	</div>
+	<div id="chart_content">
+		<!-- <div id="demo_info" style="display:inline-block">
+		location: <span style="color:steelBlue;text-decoration:underline;">demo_aaa</span></div> -->
+		<div id="chart_options">
+			<label for="templateChooser">Template:&nbsp;</label>
+			<ul id="templateChooser"  class="options">
+				<li class="selected">standard</li>
+				<li>flashy</li>
+			</ul>
+			<label for="langChooser">Local:&nbsp;</label>
+      <select id="locale">
+        <option value="en">English</option>
+        <option value="zh_CN">Chinese</option>
+      </select>
+			<label for="typeChooser">Type:&nbsp;</label>
+			<ul id="typeChooser"  class="options">
+				<li class="selected">Single</li>
+				<li>Multiple</li>
+			</ul>
+		</div>
+		<!--div id="demo_info">
+		<a href="">Example location</a><br />
+		</div-->
+		<div id="chart" style="width:80%;height:80%;margin-left:50px;"></div>
+	</div>
+</div>
+	</body>
+</html>

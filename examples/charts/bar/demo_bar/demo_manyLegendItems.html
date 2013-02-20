@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html style="height:100%;">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Bar Chart</title>
+		<style type="text/css">
+			fieldset {
+				border: solid 1px orange
+			}
+			.label {
+				font-family: Arial;
+				font-size: 12px;
+				font-weight: bold
+			}
+			.groupName {
+				font-family: Segoe UI;
+				font-size: 16px;
+				color: Gray
+			}
+		</style>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+	</head>
+	<body style="background-color:#fff; display:table;  margin:0; padding: 0; border: 0; width:100%; height:100%;">
+		<div style="width:100%; display: table-cell; vertical-align: middle">
+			<div id="chart" style="width: 700px; height: 500px; margin-left:auto; margin-right:auto; position:relative;"></div>
+			<h3>isHierarchical</h3>
+			<input type='radio' value=true name='isHierarchical'  checked='true'/>
+			<span>true</span>
+			<input type='radio' value=false name='isHierarchical'/>
+			<span>false</span>
+		</div>
+		<script type='text/javascript'>
+			$(function() {
+				var vizcore = sap.viz.core;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var chartOption = {
+					plotArea : {
+						//'colorPalette' : d3.scale.category20().range()
+					},
+					title : {
+						visible : true,
+						text : 'Sample Bar Chart Title'
+					},
+					legend : {
+						isHierarchical : true
+					}
+				};
+
+				var ds = new CrosstableDataset();
+				ds.setData({
+					'analysisAxis' : [{
+						'index' : 1,
+						'data' : [{
+							'type' : 'Dimension',
+							'name' : 'Product',
+							'values' : ['Car', 'Truck']
+						}]
+					}, {
+						'index' : 2,
+						'data' : [{
+							'type' : 'Dimension',
+							'name' : 'Country',
+							'values' : ['China', 'China', 'USA', 'USA', 'Canada', 'Canada']
+						}, {
+							'type' : 'Dimension',
+							'name' : 'Year',
+							'values' : ['2001', '2002', '2001', '2002', '2001', '2002']
+						}]
+					}],
+					'measureValuesGroup' : [{
+						'index' : 1,
+						'data' : [{
+							'type' : 'Measure',
+							'name' : 'Profit',
+							'values' : [[25, 136], [58, 128], [58, 24], [159, 147], [149, 269], [38, 97]]
+						}, {
+							'type' : 'Measure',
+							'name' : 'Revenue',
+							'values' : [[25, 136], [58, 128], [58, 24], [159, 147], [149, 269], [38, 97]]
+						}, {
+							'type' : 'Measure',
+							'name' : 'Bonus',
+							'values' : [[25, 136], [58, 128], [58, 24], [159, 147], [149, 269], [38, 97]]
+						}, {
+							'type' : 'Measure',
+							'name' : 'Percentage',
+							'values' : [[25, 136], [58, 128], [58, 24], [159, 147], [149, 269], [38, 97]]
+						}]
+					}]
+				});
+
+				var barChart = vizcore.createViz({
+					type : 'viz/bar',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+
+				$('input:radio').click(function() {
+					chartOption.legend.isHierarchical = (this.value === 'true');
+					$('#chart').empty();
+					tagcloud = vizcore.createViz({
+						type : 'viz/bar',
+						data : ds,
+						container : $('#chart'),
+						options : chartOption
+					});
+				});
+			});
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Bar-like HeatMap</title>
+        <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+        <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+        <script type="text/javascript" src="../../../../libs/json2.js"></script>
+        <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        
+    </head>
+    <body>
+        <div id="chart" style="width: 1000px; height: 800px; background-color: #ffffff"></div>      
+        <script type='text/javascript'>         
+            $(function() {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+
+                Environment.initialize({
+                    'log' : 'debug'
+                });
+
+                var chartOption = {                     
+                        title : {
+                            text : 'Bar-like HeatMap',
+                            visible : true
+                        },
+                      heatmap:
+                        {
+                            "border":
+                            {
+                                "visible":false,
+                            },
+                            "startcolor":"#303080", 
+                            "endcolor":"#f0f0ff", 
+                            "emptycolor":"transparent", 
+                            'animation': {
+                                dataLoading : true,
+                            },
+                            'colornumber': 5,
+                            'discretecolor' : true,
+                            'guideline' : 
+                            {
+                                visible: false,
+                                color: "#e0e090",
+                            },
+                            'drawemptycell': false,
+                            'colorPalette': [],
+                        }
+                    };
+                var ds = new CrosstableDataset();
+                ds.setData({
+            'analysisAxis': [{
+        
+            'index' : 1,
+            'data' : [{
+                'type' : 'Dimension',
+                'name' : 'Country',
+                'values' : ['China', 'China', 'China', 'China', 'USA', 'USA', 'USA', 'USA', 'France', 'France', 'France', 'France', 'Canada', 'Canada', 'Canada', 'Canada', 'Japan', 'Japan', 'Japan', "Japan", ]
+            },{
+                'type' : 'Dimension',
+                'name' : 'Country',
+                'values' : ['', '2006', "2007", '', '', '2006', "2007", '', '', '2006', "2007", '', '', '2006', "2007", '', '', '2006', "2007", '', ]
+            }]
+        },
+        {
+                'index': 2,
+                'data': [{
+                'type' : 'Dimension',
+                'name' : 'Profit',
+                'values' : ['10', '20', '30', '40', '50', '60', '70', '80', '90', '100', '110', '120',  
+                            '130', '140', '150', '160', '170', '180', '190', '200', '210', '220', '230', '240', 
+                           
+                           ]
+            }]
+            }                    
+                ], 
+                    'measureValuesGroup': [{
+                            'index': 1,
+                            'data': [{
+                                    'type': 'Measure',
+                                    'name': 'Profit',
+                                    'values': [
+[null,   10,   20,   null,   null,     10,    20,    null,    null,    10,    20,    null,   null,    10,    20,    null,    null,     10,     20,    null,],
+[null,   10,   20,   null,   null,     10,   40,     null,   null,    10,   40,   null,   null,   10,   40,   null,   null,   30,   20,   null,],
+[null,   10,   20,   null,   null,   30,     40,     null,   null,    10,   40,   null,   null,   30,   40,   null,   null,   30,   20,   null,],
+[null,  30,   20,    null,   null,   30,   40,     null,   null,      10,   40,   null,   null,   30,   40,   null,   null,   30,   20,   null,],
+[null,  30,   20,    null,   null,   null,   40,   null,   null,      10,   40,   null,   null,   30,   40,   null,   null,   null,   40,   null,],
+[null,  30,   20,    null,   null,   null,   40,   null,   null,      10,   null,   null,   null,   30,   40,   null,   null,   null,   40,   null,],
+[null,  30,   20,   null,   null,   null,   40,   null,   null,     10,   null,   null,   null,   30,   40,   null,   null,   null,   40,   null,],
+[null,  30,   20,   null,   null,   null,   40,   null,   null,     10,   null,   null,   null,   30,   40,   null,   null,   null,   40,   null,],
+[null,  null,   20,   null,   null,   null,   40,   null,   null,     10,   null,   null,   null,   30,   null,   null,   null,   null,   40,   null,],
+[null,  null,   20,   null,   null,   null,   40,   null,   null,     10,   null,   null,   null,   30,   null,   null,   null,   null,   40,   null,],
+[null,  null,   40,   null,   null,   null,   40,   null,   null,     10,   null,   null,   null,   30,   null,   null,   null,   null,   40,   null,],
+[null,  null,   40,   null,   null,   null,   40,   null,   null,   10,   null,   null,   null,   30,   null,   null,   null,   null,   40,   null,],
+[null,  null,   40,   null,   null,   null,   40,   null,   null,   10,   null,   null,   null,   30,   null,   null,   null,   null,   40,   null,],
+[null,  null,   40,   null,   null,   null,   null,   null,   null,   10,   null,   null,   null,   30,   null,   null,   null,   null,   40,   null,],
+[null,  null,   40,   null,   null,   null,   null,   null,   null,   10,   null,   null,   null,   30,   null,   null,   null,   null,   null,   null,],
+[null,  null,   40,   null,   null,   null,   null,   null,   null, 10,    null,   null,   null,   30,   null,   null,   null,   null,   null,   null,],
+[null,  null,   40,   null,   null,   null,   null,   null,   null, 10,    null,   null,   null,   null,   null,   null,   null,   null,   null,   null,],
+[null,  null,   null,   null,   null,   null,   null,   null,   null, 10,    null,   null,   null,   null,   null,   null,   null,   null,   null,   null,],
+[null,  null,   null,   null,   null,   null,   null,   null,   null, 10,    null,   null,   null,   null,   null,   null,   null,   null,   null,   null,],
+[null,  null,   null,   null,   null,   null,   null,   null,   null,   30,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,],
+[null,  null,   null,   null,   null,   null,   null,   null,   null,   30,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,],
+[null,  null,   null,   null,   null,   null,   null,   null,   null,   30,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,],
+[null,  null,   null,   null,   null,   null,   null,   null,   null,   30,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,],
+[null,  null,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,   null,],
+
+
+
+]
+                                }]
+                        }]});
+
+                var chart = vizcore.createViz({
+                      type : 'viz/heatmap',
+                      data : ds,
+                      container : $('#chart'),
+                      options : chartOption
+                    });
+                    chart.on('selectData', function ( evt ) {
+                        
+                     }, null);
+            });
+
+        </script>
+    
+    </body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>Annotation on Visualization</title>
+		<link rel="stylesheet" rev="stylesheet" href="resources/style.css"/>
+		<link rel="stylesheet" href="resources/jquery-ui-1.8.14.custom.css" type="text/css" media="all" />
+		<style type="text/css">
+			rect.extent {
+				fill: #000;
+				fill-opacity: .125;
+				stroke: #fff;
+			}
+
+			rect.frame {
+				fill: #fff;
+				fill-opacity: .7;
+				stroke: #aaa;
+			}
+
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>Annotation on Visualization</h1>
+			<input type="image" id="chartType" width="16px" src="resources/images/chart_bar.png" alt="_"/>
+			<input type="image" id="save" width="16px" src="resources/images/Save.png" alt="_"/>
+			<input type="image" id="open" width="16px" src="resources/images/open.png" alt="_"/>
+			<input type="image" id="lassoSelection" src="resources/images/1351058467_selection.png" alt="_"/>
+			<input type="image" id="pointSelection" src="resources/images/1351059056_stock_draw-selection.png" alt="_"/>
+		</header>
+		<div id="chart" style="width: 800px; height: 600px; background-color: #ffffff"></div>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		<script type="text/javascript" src="libs/jquery-ui-1.9.1.custom.min.js"></script>
+		<script type="text/javascript" src="../../libs/sap.viz.js"></script>
+		<script type="text/javascript" src="dataset.js"></script>
+		<script type="text/javascript" src="script.js"></script>
+
+	</body>
+</html>

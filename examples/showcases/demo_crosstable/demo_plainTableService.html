@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Cross Table Demo</title>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		<script type="text/javascript" src="plainTableBuilder.js"></script>
+		<script type="text/javascript" src="tabledata.js"></script>
+		<link href="resources/table.css" rel="stylesheet" />
+		<body>
+			<div id="chart" style="width: 1200px; height: 800px; background-color: #ffffff"></div>
+			<script type="text/javascript">
+				
+			
+				var dataCallback = function(meta, data) {
+					plainTableBuilder("#chart", meta, data);					
+				};
+				
+				var metaCallback = function(metadata) {
+					$.getJSON("http://shghana2.dhcp.pgdev.sap.corp:8000/viz/main.xsjs?jsoncallback=?", {
+						table : "A1A1A2A2MM",
+						action : "getData"
+					}, function(data) {
+						dataCallback(metadata,data);
+					});
+				};
+
+				$.getJSON("http://shghana2.dhcp.pgdev.sap.corp:8000/viz/main.xsjs?jsoncallback=?", {
+					table : "A1A1A2A2MM",
+					action : "getMetaData"
+				}, function(data) {
+					metaCallback(data);
+				});				
+
+			</script>
+		</body>
+</html>

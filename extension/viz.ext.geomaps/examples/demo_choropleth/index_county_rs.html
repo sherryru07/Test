@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Choropleth Chart</title>
+        <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+        <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+        <script type="text/javascript" src="../../../../libs/json2.js"></script>
+        <script type="text/javascript" src="../../../../libs/rtree.js"></script>
+        <script type="text/javascript" src="../../../../libs/simplify.js"></script>
+        <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        <script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+    </head>
+    <body>
+        <div id="chart" style="position:absolute; left: 50px; width: 90%; height: 90%; background-color: #ffffff"></div>
+
+        <script type='text/javascript'>
+            d3.json('../resources/USA_counties.json', function(navValues) {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+                sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+                sap.viz.GeoManager.detailMapEnabled(true);
+                
+                Environment.initialize({
+                    'log' : 'debug'
+                });
+
+                var chartOption = {
+                    choropleth: {
+                        startColor: 'rgb(203, 201, 226)',
+                        endColor: 'rgb(84, 39, 143)'
+                    },
+                    title : {
+                        visible: false,
+                        text : 'Choropleth Chart Sample'
+                    },
+                    legend : {
+                        isHierarchy : false,
+                        position : 'right',
+                        legendType : 'BubbleColorLegend'  //BubbleColorLegend
+                    }
+                };
+                
+                var ds = new CrosstableDataset();
+                var values = [];
+                var infos = [];
+                var measures = [], min = 18, max = 150, v;
+
+                $.each(navValues, function(i, v) {
+                    values.push(v.name);
+                    infos.push({ featureId : v.featureId });
+                    v = Math.round(Math.random() * max);
+                    measures.push((v > min) ? v : null);
+                });
+
+                ds.setData({
+                    'analysisAxis':[{
+                        'index' : 1,
+                        'data' : [{
+                            'type' : 'GeoDimension',
+                            'name' : 'Region',
+                            'values' : values,
+                            'infos' : infos
+                        }]
+                    }],  
+                   'measureValuesGroup':[{
+                      'index' : 1,
+                      'data' : [{
+                          'type' : 'Measure',
+                          'name' : 'Number of Planes',
+                          'values' : [ measures ]
+                      }]
+                  }]});
+                
+                var bar = vizcore.createViz({
+                    type : 'viz/choropleth',
+                    data : ds,
+                    container : $('#chart'),
+                    options : chartOption
+                });
+                
+            });
+
+        </script>
+    </body>
+</html>

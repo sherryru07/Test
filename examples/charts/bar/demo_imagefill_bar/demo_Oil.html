@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Bar Chart</title>
+
+    <link type="text/css" href="css/ui-lightness/jquery-ui-1.8.23.custom.css" rel="stylesheet" />
+
+
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+
+    <script type="text/javascript" src="js/jquery-ui-1.8.23.custom.min.js"></script>
+
+        <script>
+        var barChart;
+        $(function() {
+            $( "#tchart" ).resizable({
+                resize:function(event, ui)
+                {
+                    ;//g_categoryAxis(ui.size.height, ui.size.width);  
+                      barChart.size({
+                        'width' : ui.size.width,
+                        'height' : ui.size.height,
+                      }); 
+                }
+            });
+
+        });
+       
+        </script>
+		
+	</head>
+	<body>
+		<div id="tchart" style="width: 920px; height: 600px; background-color: #ffffff; border:2px solid #999999;"></div>
+
+		<script type='text/javascript'>
+			$('#changeTheme').click(function(){
+				sap.vizkit.ThemeManager.changeTheme('classicDay');
+			});
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+					plotArea : {
+						//'colorPalette' : d3.scale.category20().range()
+                        fillMode:
+                        {
+                           image: true,
+                           imagePalette: ["./pics/oil.png",],
+                        },
+                        animation:
+                        {
+                        dataLoading:false,
+                        },
+
+					},
+					title : {
+					  visible : true,
+						text : 'Top 5 countries by oil production'
+					},
+				};
+
+				var ds = new CrosstableDataset();
+				ds.setData({
+        			'analysisAxis': [{
+                	'index': 1,
+                	'data': [{
+                        	'type': 'Dimension',
+                        	'name': 'Product',
+                        	'values': [ 'Russia', 'Saudi Arabia','United States', 'Iran', 'China', ]
+                    		}]
+             		 }, {
+            		'index' : 2,
+                	'data': [{
+                        	'type': 'Dimension',
+                        	'name': 'Country',
+                        	'values': ['Production (bbl/day)']
+                   	 		}]
+            		}], 
+            		'measureValuesGroup': [{
+               		'index': 1,
+                	'data': [{
+                        'type': 'Measure',
+                        'name': 'Profit',
+                        'values': [[10540000, 10270000, 9688000, 4252000, 4073000,]]
+                    }]
+            }]});
+
+				//TODO How to define feeding API?
+				barChart = vizcore.createViz({
+					type : 'viz/bar',
+					data : ds,
+					container : $('#tchart'),
+					options : chartOption
+				});
+				
+				barChart.on('selectData', function () {
+				  // Do something cool
+				});
+			});
+
+		</script>
+	</body>
+</html>

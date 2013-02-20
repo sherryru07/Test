@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Viz Multi Geo Bubble Chart</title>
+<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+<script type="text/javascript" src="../../../../libs/json2.js"></script>
+<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+<script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+
+</head>
+<body>
+    <div id="chart"
+        style="position:absolute; width: 90%; height: 90%; background-color: #ffffff"></div>
+    <script type='text/javascript'>
+    $(function() {
+      var Environment = sap.viz.env;
+      var CrosstableDataset = sap.viz.data.CrosstableDataset;
+      var vizcore = sap.viz.core;
+      sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+
+      Environment.initialize({
+        'log' : 'debug'
+      });
+      var chartOption = {
+        title : {
+          text : 'Sample Multi Geo Bubble Chart Title'
+        }
+      };
+
+      var navValues = [{"name":"Iqaluit","latLong":[-68.52051,63.7513]},{"name":"Burnaby","latLong":[null,49.24453]},{"name":"Oshawa","latLong":[-78.8595,43.88868]},{"name":"St John's","latLong":[null,47.56074]},{"name":"Trois-Rivieres","latLong":[-72.54503,46.34018]},{"name":"London","latLong":[-81.24621,42.98689]},{"name":"Kelowna","latLong":[-119.4966,49.88681]},{"name":"Halifax","latLong":[-63.57392,44.64616]},{"name":"Barrie","latLong":[-79.68632,44.3893]},{"name":"Lévis","latLong":[-71.17694,46.80286]},{"name":"Victoria","latLong":[-123.36451,48.42831]},{"name":"Kingston","latLong":[-76.47933,44.23153]},{"name":"Quebec","latLong":[-71.21935,46.81274]},{"name":"Richmond","latLong":[-123.13662,49.16337]},{"name":"Gatineau","latLong":[-75.71048,45.42785]}];
+
+      var values = [];
+      var infos = [];
+
+      var measures = [], min = 18, max = 150, v, setNull = false;
+
+      $.each(navValues, function(i, v) {
+        values.push(v.name);
+        infos.push({ featureId: navValues[i].featureId, latLong: navValues[i].latLong });
+        
+        var measure = [];
+        for (var i = 0; i < 6; i++) {
+          v = Math.round(Math.random() * max);
+          if (v <= min) {
+            if (setNull) {
+              v = null;
+            } else {
+              v = 'invalid value';
+            }
+            
+            setNull = !setNull;
+          }
+          
+          measure.push(v);
+        }
+        
+        measures.push(measure);
+    });
+
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [
+            {
+              'index' : 1,
+              'data' : [
+                  {
+                    'type' : 'Dimension',
+                    'name' : 'Product',
+                    'values' : [ 'Car', 'Car', 'Truck', 'Truck', 'Motorcycle', 'Motorcycle']
+                  },
+                  {
+                    'type' : 'Dimension',
+                    'name' : 'Year',
+                    'values' : [ '2001', '2002', '2001', '2002', '2001', '2002']
+                  } ]
+            }, {
+              'index' : 2,
+              'data' : [ {
+                'type' : 'Dimension',
+                'name' : 'City',
+                'values' : values,
+                'infos' : infos
+              }]
+            } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Number of Planes',
+            'values' : measures
+          } ]
+        } ]
+      });
+
+      var bar = vizcore.createViz({
+        type : 'viz/multi_geobubble',
+        data : ds,
+        container : $('#chart'),
+        options : chartOption
+      });
+
+    });
+  </script>
+
+</body>
+</html>

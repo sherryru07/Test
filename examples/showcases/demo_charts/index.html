@@ -1,0 +1,149 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Demo Charts</title>
+  <script type="text/javascript" src="../../libs/jquery.js"></script>
+  <script type="text/javascript" src="../../libs/d3.v2.js"></script>
+  <script type="text/javascript" src="../../libs/sap.common.globalization.js"></script>
+  <script type="text/javascript" src="../../libs/sap.viz.js"></script>
+  <!-- Extension Charts -->
+  <script type="text/javascript" src="../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+  <script type="text/javascript" src="../../extension/viz.ext.predictive/libs/sap.viz.ext.pa.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="resources/css/smoothness/jquery-ui-1.8.14.custom.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/style.css">
+	<link rel="stylesheet" type="text/css" href="resources/css/codemirror.css">
+	<script src="resources/js/jquery-ui-1.8.23.min.js"></script>
+	<script type="text/javascript" src="resources/js/beautify.js"></script>
+	<script type="text/javascript" src="resources/js/codemirror.js"></script>
+	<script type="text/javascript" src="resources/js/javascript.js"></script>
+	<script src='resources/js/charts.js'></script>
+	<script type="text/javascript" src="resources/js/main.js"></script>
+		<style type="text/css">
+		
+		</style>
+		<script type="text/javascript">
+		$(document).ready(function(){
+		  	sap.viz.TemplateManager.loadPath=["../../resources/templates/", "../../extension/viz.ext.geomaps/resources/templates/"];
+				sap.viz.lang.langManager.loadPath=["../../resources/langs/", "../../extension/viz.ext.geomaps/resources/langs/"];
+			  sap.viz.GeoManager&&sap.viz.GeoManager.resourcePath('../../extension/viz.ext.geomaps/resources');
+		})
+		</script>
+	</head>
+	<body>
+<div id="banner">
+	<div id="header" style="display:inline-block;left:0;position:relative;float:left;">
+        
+		<img src="resources/images/logo.png" style="width:120px;height:32px;" alt="SAPViz">
+	</div>
+		<h2 id="chart_title" style="position:relative;margin-top:0;margin-bottom:0;text-align: center;">Chart</h2>
+</div>
+<div id="main">
+
+	<div id="chart_index">
+		
+		<ul>
+		</ul>
+		<div id="help" style="">
+			<p><img src="resources/images/multi_chart_icon.png" />Multiple Layout  available in this chart. </p>
+    <p><img src="resources/images/info_icon.png" />Geographic charts only shows when demo runs in the web server</p>
+			<p>SAP CVOM 2012 Preview</p>
+		</div>
+	</div>
+	<div id="splitter">
+		<!-- <div id="splitBtn" style="position:fixed;top:500px;width:7px;height:10px;background-image:url(resources/images/vsplit_arr.png);"> </div>-->
+	</div>
+	<div id="chart_content">
+		<div style="float:left;width:80%;height:100%;">
+		
+		<!-- <div id="demo_info" style="display:inline-block">
+		location: <span style="color:steelBlue;text-decoration:underline;">demo_aaa</span></div> -->
+		<div id="chart_options">
+			<label for="templateChooser">Template:&nbsp;</label>
+			<ul id="templateChooser"  class="options">
+				<li>standard</li>
+				<li class="selected">flashy</li>
+			</ul>
+			<label for="langChooser">Local:&nbsp;</label>
+			<select>
+				<option>English</option>
+				<option>Chinese</option>
+			</select>
+			<label for="typeChooser">Type:&nbsp;</label>
+			<ul id="typeChooser"  class="options">
+				<li class="selected">Single</li>
+				<li>Multiple</li>
+			</ul>
+			<label for="modeChooser">Mode:&nbsp;</label>
+			<ul id="modeChooser"  class="options">
+				<li class="selected">comparison</li>
+				<li>percentage</li>
+			</ul>
+			<div id="randomOptions">
+			<a id="randomData" title="Random Data"></a>
+			<a id="randomSchema" title="Random Schema"></a>
+			</div>
+		</div>
+		
+			
+		
+		<!--div id="demo_info">
+		<a href="">Example location</a><br />
+		</div-->
+		<div id="chart" style="width:80%;height:80%;margin-left:50px;"></div>
+
+			<!--div id="event_panel">
+				<div style="display:inline-block;margin-right:-4px;">
+				<div class="panel_header">Event Data</div>
+				<textarea id="eventData" cols="50" rows="10"></textarea>
+				</div>
+				
+				<div style="display:inline-block;">
+				<div class="panel_header">Event Data Point</div>
+				<textarea id="originalData" cols="50" rows="10"></textarea>
+				</div>
+			</div-->
+
+		</div>
+	</div>
+	<div id="prop_bar" style="font-weight:bold;font-size:16px;">
+	<div id="template_bar">
+		<span style="font-size:10px;">&nbsp; ◀◀</span>
+		<br /><br />
+		<p >Template Source</p>
+	</div>
+	<div id="event_bar">
+		<span style="font-size:10px;">&nbsp; ◀◀</span>
+		<br /><br />
+		<p >Event Data</p>
+	</div>
+	</div>
+	<div id="template_panel">
+		<div class="panel_header"> <span>&nbsp;&nbsp;&nbsp; Template Source</span><button id="changeTemplate" style="float: right;">Apply</button></div>
+<textarea id="templateDefs" cols="50" ></textarea>
+	</div>
+	<div id="event_panel">
+		<div id="eventdata" style="">
+		<div class="panel_header">Event Data</div>
+		<textarea id="eventData" cols="58" rows="10"></textarea>
+		</div>
+		
+		<div id="eventpoint" style="">
+		<div class="panel_header">Event Data Point</div>
+		<textarea id="originalData" cols="47" rows="10"></textarea>
+		</div>
+		<!--div style="">
+		<div class="panel_header">Deselect Event Data</div>
+		<textarea id="deselectEventData" cols="60" rows="10"></textarea>
+		</div>
+		<div style="">
+		<div class="panel_header">Deselect Event Data Point</div>
+		<textarea id="deselectOriginalData" cols="60" rows="10"></textarea>
+		</div-->
+		
+	</div>
+	
+</div>
+	</body>
+</html>

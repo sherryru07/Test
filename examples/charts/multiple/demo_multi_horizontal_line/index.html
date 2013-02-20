@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Multi Horizontal Line Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+				
+	</head>
+	<body>
+		<div id="chart" style="width: 900px; height: 900px; background-color: #ffffff"></div>	
+		<script type='text/javascript'>
+		$(function() {
+		    var Environment = sap.viz.env;
+		    var CrosstableDataset = sap.viz.data.CrosstableDataset;
+		    var vizcore = sap.viz.core;
+		    
+		    Environment.initialize({
+		        'log': 'debug'
+		    });
+		    var chartOption = {
+		    	plotArea: {
+		        //'colorPalette' : ["#D9B5CA", "#AED1DA", "#DFECB2", "#FCDAB0", "#F5BCB4"]
+		        },
+		        title: {
+		            text: 'Sample Multi Horizontal Line Chart Title'
+		        }
+		    };
+		    
+		    var ds = new CrosstableDataset();
+		    ds.setData({
+		        'analysisAxis' : [{
+	                'index': 1,
+	                'data': [{
+	                        'type': 'Dimension',
+	                        'name': 'Country',
+	                        'values': ['China', 'China', 'USA', 'USA', 'Canada', 'Canada', 'Spain', 'Spain']
+	                    }, {
+	                        'type': 'Dimension',
+	                        'name': 'Year',
+	                        'values': ['2001', '2002', '2001', '2002', '2001', '2002', '2001', '2002']
+	                    }]
+	            }, {
+	                'index': 2,
+	                'data': [{
+	                        'type': 'Dimension',
+	                        'name': 'Product',
+	                        'values': ['Car', 'Car', 'Truck', 'Truck']
+	                    },{
+	                        'type': 'Dimension',
+	                        'name': 'Color',
+	                        'values': ['Black', 'Red', 'Black', 'Red']
+	                    }]
+	            }],
+	           'measureValuesGroup' : [{
+	                'index': 1,
+	                'data': [{
+	                        'type': 'Measure',
+	                        'name': 'Profit',
+	                        'values': [[16, 2, 13, 2, 31, 3, 58, 7], [75, 2, 75, 6, 22, 3, 3, 48], [6, 62, 3, 82, 1, 13, 8, 37], [45, 2, 65, 6, 82, 3, 13, 8]]
+	                    },{
+	                        'type': 'Measure',
+	                        'name': 'Revenue',
+	                        'values': [[6, 12, 3, 22, 1, 43, 8, 67], [5, 82, 5, 16, 2, 3, 33, 8], [56, 2, 73, 2, 91, 3, 8, 27], [5, 52, 5, 76, 2, 93, 3, 28]]
+	                    }]
+	            }]});		   
+
+		    //TODO How to define feeding API?
+		    var bar = vizcore.createViz({
+		        type: 'viz/multi_horizontal_line',
+		        data: ds,
+		        container: $('#chart'),
+		        options: chartOption
+		    });
+
+		});
+
+		</script>
+		
+	</body>
+</html>

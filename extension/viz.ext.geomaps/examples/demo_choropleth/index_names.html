@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Choropleth Chart</title>
+        <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+        <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+        <script type="text/javascript" src="../../../../libs/json2.js"></script>
+        <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        <script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+    </head>
+    <body>
+        <div id="chart" style="position:absolute; left: 50px; width: 90%; height: 90%; background-color: #ffffff"></div>
+
+        <script type='text/javascript'>
+            $(function() {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+                sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+
+                Environment.initialize({
+                    'log' : 'debug'
+                });
+
+                var chartOption = {
+                    choropleth: {
+                        startColor: 'rgb(239, 237, 245)',
+                        endColor: 'rgb(117, 107, 177)'
+                    },
+                    title : {
+                        visible: false,
+                        text : 'Choropleth Chart Sample'
+                    },
+                    legend : {
+                        isHierarchy : false,
+                        position : 'right',
+                        legendType : 'BubbleColorLegend'  //BubbleColorLegend
+                    }
+                };
+
+                var ds = new CrosstableDataset();
+
+                window.navValues =[
+                    { "name": "Iqaluit", "location": [ { "name": "Canada", "level": "0"}, { "name": "Iqaluit", "level": "c" } ]},
+                    { "name": "Burnaby", "location": [ { "name": "Canada", "level": "0"}, { "name": "Burnaby", "level": "c" } ]},
+                    { "name": "Oshawa", "location": [ { "name": "Canada", "level": "0"}, { "name": "Oshawa", "level": "c" } ]},
+                    { "name": "St John's", "location": [ { "name": "Canada", "level": "0"}, { "name": "St John's", "level": "c" } ]},
+                    { "name": "Trois-Rivieres", "location": [ { "name": "Canada", "level": "0"}, { "name": "Trois-Rivieres", "level": "c" } ]},
+                    { "name": "London", "location": [ { "name": "Canada", "level": "0"}, { "name": "London", "level": "c" } ]},
+                    { "name": "Kelowna", "location": [ { "name": "Canada", "level": "0"}, { "name": "Kelowna", "level": "c" } ]},
+                    { "name": "Halifax", "location": [ { "name": "Canada", "level": "0"}, { "name": "Halifax", "level": "c" } ]},
+                    { "name": "Barrie", "location": [ { "name": "Canada", "level": "0"}, { "name": "Barrie", "level": "c" } ]},
+                    { "name": "Lévis", "location": [ { "name": "Canada", "level": "0"}, { "name": "Lévis", "level": "c" } ]},
+                    { "name": "Victoria", "location": [ { "name": "Canada", "level": "0"}, { "name": "Victoria", "level": "c" } ]},
+                    { "name": "Kingston", "location": [ { "name": "Canada", "level": "0"}, { "name": "Kingston", "level": "c" } ]},
+                    { "name": "Quebec", "location": [ { "name": "Canada", "level": "0"}, { "name": "Quebec", "level": "c" } ]},
+                    { "name": "Richmond", "location": [ { "name": "Canada", "level": "0"}, { "name": "Richmond", "level": "c" } ]},
+                    { "name": "Gatineau", "location": [ { "name": "Canada", "level": "0"}, { "name": "Gatineau", "level": "c" } ]}
+                ];
+
+                var values = [];
+                var infos = [];
+                var measures = [], min = 18, max = 150, v;
+
+                $.each(navValues, function(i, v) {
+                    values.push(v.name);
+                    infos.push({ location : v.location });
+                    v = Math.round(Math.random() * max);
+                    measures.push((v > min) ? v : null);
+                });
+
+                ds.setData({
+                    'analysisAxis':[{
+                        'index' : 1,
+                        'data' : [{
+                            'type' : 'GeoDimension',
+                            'name' : 'Region',
+                            'values' : values,
+                            'infos' : infos
+                        }]
+                    }],  
+                   'measureValuesGroup':[{
+                      'index' : 1,
+                      'data' : [{
+                          'type' : 'Measure',
+                          'name' : 'Number of Planes',
+                          'values' : [ measures ]
+                      }]
+                  }]});
+                
+                var bar = vizcore.createViz({
+                    type : 'viz/choropleth',
+                    data : ds,
+                    container : $('#chart'),
+                    options : chartOption
+                });
+                
+            });
+
+        </script>
+    </body>
+</html>

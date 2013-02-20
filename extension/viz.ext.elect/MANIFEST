@@ -1,0 +1,23 @@
+{
+    "name": "viz.ext.predictive",
+    "version": "0.1.0",
+    "min-sdk-version": "4.0.0",
+    "charts": [{
+        "all": "libs/sap.viz.ext.elect.js"
+    }, {
+        "all-debug": "libs/sap.viz.ext.elect.js"
+    }, {
+        "viz/ext/elect": "libs/sap.viz.ext.elect.js"
+    }],
+	"icons": [{
+        "viz/ext/elect": "res/elect.ico"
+    }],
+	"deps":
+	[{
+		"sap.viz.core": 
+		{	src: "../../libs/sap.viz.js",
+			version: "4.0.0",
+			description: "CVOM HTML5 Visualization Core Chart Pack"
+		}
+	}]
+}

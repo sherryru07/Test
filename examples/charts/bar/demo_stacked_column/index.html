@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Stacked Vertical Bar Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+		
+	</head>
+	<body>
+		<div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+		<script type='text/javascript'>
+		$(function() {
+		    var Environment = sap.viz.env;
+		    var CrosstableDataset = sap.viz.data.CrosstableDataset;
+		    var vizcore = sap.viz.core;
+		    
+		    Environment.initialize({
+		        'log': 'debug'
+		    });
+		    
+		    var chartOption = {
+		    	plotArea: {
+		        //'colorPallet' : ["#D9B5CA", "#AED1DA", "#DFECB2", "#FCDAB0", "#F5BCB4"]
+		        },
+		        title: {
+		          visible : true,
+		          text: 'Sample Stacked Vertical Bar Chart Title'
+		        }
+		    };
+		    
+		    var ds = new CrosstableDataset();
+		    ds.setData( {
+            'analysisAxis':	[                 
+            {
+                'index': 1,
+                'data': [{
+                        'type': 'Dimension',
+                        'name': 'Product',
+                        'values': ['Car', 'Truck', 'Motorcycle', 'Bicycle']
+                    }]
+            }, {
+                'index': 2,
+                'data': [{
+                        'type': 'Dimension',
+                        'name': 'Country',
+                        'values': ['China', 'USA']
+                    }, {
+                        'type': 'Dimension',
+                        'name': 'Year',
+                        'values': ['2001', '2001']
+                    }]
+            }],
+            'measureValuesGroup' :[{
+                'index': 1,
+                'data': [{
+                        'type': 'Measure',
+                        'name': 'Profit',
+                        'values': [[25, 236, 23, 116], [58, 128, 43, 73]]
+                    }, {
+                        'type': 'Measure',
+                        'name': 'Revenue',
+                        //'values' : [[50,236, 43, 126], [158, 228, 143, 143], [158, 64, 84, 143], [259, 347,390, 390], [249, 369, 532, 112], [318, 197,62,156]]
+                        'values': [[50, 86, 43, 146], [158, 88, 143, 183]]
+                    }]
+            }]});
+		    var bar = vizcore.createViz({
+		        type: 'viz/stacked_column',
+		        data: ds,
+		        container: $('#chart'),
+		        options: chartOption
+		    });
+
+		});
+
+		</script>
+		
+	</body>
+</html>

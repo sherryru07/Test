@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Bubble Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+	</head>
+	<body>
+		<div id="chart" style="position:absolute; left: 50px; width: 600px; height: 400px; background-color: #ffffff"></div>
+		<div id="chart2" style="position:absolute; left: 50px; top: 450px;  width: 600px; height: 400px; background-color: #ffffff"></div>
+		<script type='text/javascript'>
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+					plotArea : {
+						//'colorPalette' : d3.scale.category20().range()
+					},
+					title : {
+					  visible : true,
+						text : 'Sample Bubble Chart Title - Size Legend'
+					},
+					legend : {
+						isHierarchy : false,
+						position : 'right',
+						type : 'SizeLegend'  //BubbleColorLegend
+					}
+				};
+
+				var ds = new CrosstableDataset();
+				ds.setData({
+					'analysisAxis':[{
+						'index' : 1,
+						'data' : [{
+							'type' : 'Dimension',
+							'name' : 'Region',
+							'values' : ['Asia', 'Asia', 'Asia', 'Asia', 'Asia', 'Europe', 'Europe', 'Europe', 'Europe', 'Europe', 'North America', 'North America',
+							            'North America', 'North America', 'North America', 'Others', 'Others', 'Others', 'Others']
+						}, {
+							'type' : 'Dimension',
+							'name' : 'Company',
+							'values' : ['FJ', 'JL', 'MU', 'NG', 'SQ', 'AB', 'AF', 'AZ', 'BA', 'LH', 'AA', 'AC', 'DL', 'NW', 'UA', 'CO', 'MO', 'QF', 'SA']
+						}]
+					}], /*{
+						'feedId' : 'sap.viz.correlation.shape',
+						'data' : [{
+							'type' : 'Dimension',
+							'name' : 'Product',
+							'values' : ['Car', 'Truck']
+						}]
+					},*/ 
+					 'measureValuesGroup':[{
+						'index' : 1,
+						'data' : [{
+							'type' : 'Measure',
+							'name' : 'Revenue',
+							'values' : [[4.6, 18.5, 14.2, 10.1, 21.3, 13.5, 10.1,
+							             32.8, 8.7, 27.8, 20.3, 10.9, 13.2, 7.3,
+							             22.1, 5.2, 7.6, 19, 2.5]]
+						}]
+					}, {
+						'index' : 2,
+						'data' : [{
+							'type' : 'Measure',
+							'name' : 'Number of Countries',
+							'values' : [[3, 18, 7, 10, 15, 12, 16, 32, 5, 20, 21, 3, 18, 4, 21, 8, 2, 15, 3]]
+						}]
+					}, {
+						'index' : 3,
+						'data' : [{
+							'type' : 'Measure',
+							'name' : 'Number of Planes',
+							'values' : [[18, 98, 30, 46, 100, 103, 102, 150, 73, 100, 97, 20, 119, 30, 129, 60, 30, 98, 19]]
+						}]
+					}/*, {
+						'feedId' : 'sap.viz.correlation.marker.height',
+						'data' : [{
+							'type' : 'Measure',
+							'name' : 'Total',
+							'values' : [[4, 8, 14, 11], [12, 6, 9, 3]]
+						}]
+					}*/]});
+
+				var bar = vizcore.createViz({
+					type : 'viz/bubble',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+				
+				chartOption = {
+					bubble : {
+						selectionMode : 'multi',
+                        tooltipEnabled : false
+					},
+					title : {
+						text : 'Sample Bubble Chart Title - Bubble Color Legend'
+					},
+					legend : {
+						isHierarchy : false,
+						position : 'right',
+						legendType : 'BubbleColorLegend'  //BubbleColorLegend
+					}
+				};
+
+				var bar = vizcore.createViz({
+					type : 'viz/bubble',
+					data : ds,
+					container : $('#chart2'),
+					options : chartOption
+				});
+			});
+
+		</script>
+	</body>
+</html>

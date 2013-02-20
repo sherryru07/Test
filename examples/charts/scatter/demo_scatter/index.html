@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Scatter Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+	</head>
+	<body>
+		<div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+		<script type='text/javascript'>
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+					plotArea : {
+						//'colorPalette' : d3.scale.category20().range()
+					},
+					title : {
+					  visible : true,
+						text : 'Sample Bubble Chart Title - Size Legend'
+					},
+					legend : {
+						isHierarchy : false,
+						position : 'right',
+						legendType : 'SizeLegend'  //BubbleColorLegend
+					}
+				};
+
+				var ds = new CrosstableDataset();
+				ds.setData({
+					'analysisAxis':[{
+						'index' : 1,
+						'data' : [{
+							'type' : 'Dimension',
+							'name' : 'Country',
+							'values' : ['China', 'China', 'China', 'China', 'USA', 'USA', 'USA', 'USA', 'Canada', 'Canada', 'Canada', 'Canada', 'Germany', 'Germany', 'Germany', 'Germany']
+						}, {
+							'type' : 'Dimension',
+							'name' : 'Product',
+							'values' : ['Car', 'Truck', 'Motorcycle', 'Bicycle', 'Car', 'Truck', 'Motorcycle', 'Bicycle', 'Car', 'Truck', 'Motorcycle', 'Bicycle', 'Car', 'Truck', 'Motorcycle', 'Bicycle']
+						}]
+					}], 
+					'measureValuesGroup':[{
+						'index' : 1,
+						'data' : [{
+							'type' : 'Measure',
+							'name' : 'Revenue',
+							'values' : [[20, 18, 25, 35, 30, 19, 22, 40, 36, 10, 42, 12, 15, 35, 28, 7]]
+						}]
+					}, {
+						'index' : 2,
+						'data' : [{
+							'type' : 'Measure',
+							'name' : 'Profit',
+							'values' : [[5, 8, 5, 15, 12, 15, 6, 11, 20, 5, 23, 10, 14, 8, 20, 5]]
+						}]
+					}]});
+
+				var scatter = vizcore.createViz({
+					type : 'viz/scatter',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+			});
+
+		</script>
+	</body>
+</html>

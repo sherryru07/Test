@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Radar Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+	</head>
+	<body>
+		<div id="chart" style="width: 800px; height: 800px; background-color: #ffffff"></div>
+		<script type='text/javascript'>
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+				plotArea : {
+				    drawingEffect : "glossy",
+				    colorPalette : [],
+				    valueAxis : {
+				      visible : true,
+				      title : {
+				        visible : false,
+				        text : "A big deal",
+				        color : "steelblue",
+				      }
+				    },
+				    polarAxis : { title : { visible : true, text : "Boeing is my hero!" } },
+				    line : { weight : 10, }
+				  },
+					title : {
+					  visible : true,
+						text : "What's a title for?"
+					}
+				};
+
+				var ds = new CrosstableDataset();
+
+				ds.setData({
+			          analysisAxis : [{
+			              index : 1,
+			              data : [{
+			                type : "Dimension",
+			                name : "Model",
+			                values : [ "777-200", "777-200ER", "777-200LR", "777 Freighter", "777-300", "777-300ER" ]
+			              }]
+			            }, {
+			              index : 2,
+			              data : [{
+			                type : "Dimension",
+			                name : "Factory",
+			                values : [ "Everett", "Everett", "Long Beach", "Long Beach" ]
+			              }, {
+			                type : "Dimension",
+			                name : "Year",
+			                values : [ "2007", "2010", "2007", "2010" ]
+			              }]
+			            }],
+			            
+			            measureValuesGroup : [{
+			              index : 1,
+			              data : [{
+			                type : "Measure",
+			                name : "Empty Weight",
+			                values : [ [ 590000, 670000, 300000, 480000, 240500, 380000 ], 
+			                           [ 210000, 310000, 315000, 410000, 370000, 613000 ], 
+			                           [ 270000, 520000, 325000, 420000, 520000, 720000 ], 
+			                           [ 240000, 130000, 330000, 430000, 530000, 630000 ] ]
+			              }, {
+			                type : "Measure",
+			                name : "MTW",
+			                values : [ [ 195000, 185000, 476000, 169800, 130000, 178000 ], 
+			                           [ 135000, 150000, 146000, 669800, 130000, 178000 ], 
+			                           [ 135000, 150000, 146000, 159800, 130000, 178000 ], 
+			                           [ 145000, 156000, 166000, 166800, 160000, 197500 ] ]
+			              }]
+			            }]
+			          });
+
+				/*
+				ds.setData({
+          "analysisAxis":[{
+              "index":1,
+              "data":[{
+                  "name":"Country",
+                  "values":["China","France","Germany","USA"]
+              }]
+          }],
+          "measureValuesGroup":[{
+              "index":1,
+              "data":[{
+                  "name":"Revenue",
+                  "values":[[550,412,551,563]]
+              }]
+          }]
+      });
+			  /*
+			  ds.setData({
+			    "analysisAxis":[{
+			      "index":1,
+			      "data":[{
+			        "name":"Country",
+			        "values":["All Countries"]
+			      }]
+			    }],
+			    "measureValuesGroup":[{
+			      "index":1,
+			      "data":[{
+			        "name":"Revenue2",
+			        "values":[[39]]}
+			      ]}
+			    ]} );*/
+			   /* ds.setData({"analysisAxis":[{"index":1,"data":[{"name":"Country","values":["China","France","Germany","USA"]}]}],"measureValuesGroup":[{"index":1,"data":[{"name":"Price2","values":[[544,272,237,276]]}]}]} );
+			  var bindingInfo = [];*/
+			    
+				var tagcloud = vizcore.createViz({
+					type : 'viz/radar',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+			});
+
+		</script>
+	</body>
+</html>

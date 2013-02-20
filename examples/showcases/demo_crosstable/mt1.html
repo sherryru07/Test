@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Cross Table Demo</title>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		<script type="text/javascript" src="crossTableBuilder.js"></script>
+		<script type="text/javascript" src="data.js"></script>
+		<link href="resources/table.css" rel="stylesheet" />
+		<body>
+			<div id="chart" style="width: 1200px; height: 800px; background-color: #ffffff"></div>
+			<script type="text/javascript">
+				var binding = {
+					col : ["aa2"],
+					row : ["mnd"],
+					multi : ["aa1"]
+				};
+				crosstableBuider("#chart", data, binding);
+
+			</script>
+		</body>
+</html>

@@ -1,0 +1,129 @@
+/************ Tags ************/
+
+/* Just some basic reset for the body tag */
+body {
+	background: #F1C387;
+	padding: 0;
+	margin: 0;
+	font-family: Helvetica, Verdana, Geneva, sans-serif
+}
+
+header {
+	padding-left: 20px;
+	height: 50px;
+	display: block;
+	background: #0E0300;
+	-webkit-box-shadow: 0px 2px 5px gray;
+	-moz-box-shadow: 0px 2px 5px gray;
+	box-shadow: 0px 2px 5px gray;
+	text-align: right;
+}
+
+h1 {
+	color: white;
+	display: inline;
+	font-size: 210%;
+	padding: 15px 10px 0px 0px;
+	text-shadow: 1px -1px 0px #999;
+	text-transform: capitalize;
+}
+
+input[type="image"] {
+	background: #EFE4DC;
+	border: 1px solid black;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	color: black;
+	font-weight: bold;
+	float: left;
+	padding: 10px;
+	margin: 5px 10px 0 0;
+	text-shadow: 1px 1px 0px white;
+}
+
+input[type="image"]:hover {
+	background: #E03A00;
+	color: white;
+	text-shadow: 1px 1px 0px black;
+	cursor: pointer;
+}
+
+.selectType {
+	border: 1px solid black;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	color: black;
+	font-weight: bold;
+	float: left;
+	padding: 10px;
+	margin: 5px 10px 0 0;
+	text-shadow: 1px 1px 0px white;
+}
+
+.selectType:hover {
+	background: #E03A00;
+	color: white;
+	text-shadow: 1px 1px 0px black;
+	cursor: pointer;
+}
+
+/************ Classes ************/
+
+.annotation {
+	border: 1px solid gray;
+	width: 280px;
+	height: 100px;
+	padding: 4px;
+	font-size: 85%;
+	overflow: hidden;
+	resize: both;
+	min-width: 100px;
+	min-height: 30px;
+	max-width: 400px;
+	max-height: 300px;
+	background: #FFFC7F;
+	-moz-box-shadow: 2px 2px 2px #999999;
+	-webkit-box-shadow: 2px 2px 2px #999999;
+	box-shadow: 2px 2px 2px #999999;
+	position: absolute;
+}
+
+.toolbar {
+	text-align: right;
+	font-weight: bold;
+}
+
+/* Postick's button "delete" */
+.delete {
+	cursor: pointer;
+	font-size: 120%;
+}
+
+/* Content to be editable inside the postick */
+.editable {
+	cursor: pointer;
+	height: 85%;
+	resize: none;
+	marging: 0 auto;
+	width: 95%;
+	overflow: hidden;
+	position: relative;
+	-moz-text-shadow: 1px 1px 0px white;
+	text-shadow: 1px 1px 0px white;
+}
+
+.editable:hover {
+	border: 1px dotted gray;
+}
+
+.lasso {
+	border: 2px dotted black;
+	overflow: hidden;
+	position: absolute;
+	opacity: 0.1;
+}
+.lasso:hover {
+	border: 2px solid black;
+	overflow: hidden;
+	opacity: 0.5;
+}

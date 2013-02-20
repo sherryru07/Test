@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>TreeMap</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+	</head>
+	<body>
+		<div id="chart" style="width: 900px; height: 600px; background-color: #ffffff"></div>		
+		<script type='text/javascript'>	
+        var d1 = [];
+              var data = [];
+              var iNum = 90;
+              for(var i = 1; i<=iNum; i+=1)
+              {
+                d1.push("N + 10, N <= 90");
+                data.push(i*10);
+              }
+
+              var data2 = [];
+              for(var i = 1; i<=iNum; i+=1)
+              {
+                d1.push("N ^ 1.1, N <= 90");
+                data2.push(Math.pow(1.1,i));
+              }
+
+              var dimension1 = d1;
+              var dimension2 = data.concat(data2);
+
+              console.log(dimension1);
+              console.log(dimension2);
+
+              var mData = [];
+              mData.push(dimension2);
+
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {						
+                      padding : [ 0, 0, 0, 0 ],
+                        title : {
+                            text : 'Geometric Progression Vs Arithmetric Progression',
+                            visible : true
+                        },
+
+                      plotArea:
+                        {
+                            border:{visible:false},
+                            colornumber : 20,
+                            "endColor":"#3300c0", 
+                            "startColor":"#a9f0ff", 
+                        },
+
+                      tooltip:{visible:true},
+					};
+				var ds = new CrosstableDataset();
+				ds.setData({
+                    'analysisAxis':	[{
+                
+                    'index' : 1,
+                    'data' : [{
+                        'type' : 'Dimension',
+                        'name' : 'R',
+                        'values' : dimension1,
+                        },{
+                        'type' : 'Dimension',
+                        'name' : 'R',
+                        'values' : dimension2,
+                        }
+                        ]
+                    }], 
+                  'measureValuesGroup': [{
+                        'index': 1,
+                        'data': [{
+                          'type' : 'Measure',
+                      'name' : 'Profit',
+                      'values' : mData,
+                        }]
+                      },{
+                        'index': 2,
+                        'data': [{
+                            'type' : 'Measure',
+                      'name' : 'Color',
+                      'values' : mData,
+                      }]
+                      }]
+                });
+
+				var chart = vizcore.createViz({
+					  type : 'viz/treemap',
+					  data : ds,
+					  container : $('#chart'),
+					  options : chartOption
+					});
+				    chart.on('selectData', function ( evt ) {
+				        
+				     }, null);
+			});
+
+		</script>
+	
+	</body>
+</html>

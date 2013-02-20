@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Feeder</title>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		
+		<script type="text/javascript" src="../../libs/sap.viz.js"></script>
+		<script type="text/javascript" src="modules/main.js"></script>
+		
+	</head>
+	<body>
+		<label id="chartType">Chart Id</label>
+		<select id="chartIds" name="Chart Id"></select>
+		<div id = "Feed Definition">
+			<table id= "feedTable" border="1">
+			  <tr>
+				<th>FeedId</th>
+				<th>FeedName</th>
+				<th>FeedType</th>
+				<th>Min</th>
+				<th>Max</th>
+				<th>AAIndex</th>
+				<th>MGIndex</th>
+				<th>AcceptMND</th>
+			  </tr>
+			</table>
+		</div>
+		<select id="lineDataSets" name="line data set"></select>
+		<div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+		<div id="chartData" style="width: 800px; height: 600px; background-color: #ffffff">
+			<div style="position:absolute; top:20px; left: 820px;">
+				<div>
+				  <label>CrossTable Dataset</label>
+				</div>
+				<textarea id="dataset" cols="100" rows="20"></textarea>
+				<div>
+				  <label>Feeding</label>
+				</div>
+				<textarea id="feeding" cols="100" rows="10"></textarea>
+				<div>
+				  <input type="button" id = "testFeed" value="Test Feed"/>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

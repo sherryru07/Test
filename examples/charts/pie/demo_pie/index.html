@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Pie Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+		
+	</head>
+	<body>
+		<div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+		<button id="themeBtn">
+			Change theme
+		</button>
+		<select id="themes">
+			<option>red</option><option>black</option>
+		</select>
+		<script type='text/javascript'>
+			$(function() {
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+		 
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+						plotArea : {
+						//'colorPalette' : d3.scale.category20().range(),
+						tooltip : {
+							enabled : true,
+							valueFormat : "n",
+							percentageFormat : ".0%"
+						}
+					},
+					title : {
+					  visible : true,
+						text : 'Sample Pie Chart Title'
+					}
+				};
+
+				var ds = new CrosstableDataset();
+				ds.setData({
+			        'analysisAxis':[{
+					'index' :  1,
+	                'data': [{
+	                        'type': 'Dimension',
+	                        'name': 'Country',
+	                        'values': ['China', 'China', 'USA', 'USA', 'Canada', 'Canada']
+	                    }, {
+	                        'type': 'Dimension',
+	                        'name': 'Year',
+	                        'values': ['2001', '2002', '2001', '2002', '2001', '2002']
+	                    }]
+	            }], 
+				'measureValuesGroup':[{
+	                'index' : 1,
+	                'data': [{
+	                        'type': 'Measure',
+	                        'name': 'Profit',
+	                        'values': [[25, 58, 58, 159, 149, 38]]
+	                    }]
+	            }]});
+
+				//TODO How to define feeding API?
+				var bar = vizcore.createViz({
+					type : 'viz/pie',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+			});
+
+		</script>
+	</body>
+</html>

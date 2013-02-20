@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Feeding</title>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		
+		<script type="text/javascript" src="../../libs/sap.viz.base.js" base-url="modules/"></script>
+		<script type="text/javascript" src="libs/jquery-ui-1.8.21.custom.min.js"></script>
+		<script type="text/javascript" src="drawTable.js"></script>
+		<script type="text/javascript" src="modules/main.js"></script>
+		<script type="text/javascript" src="feedingFunction.js"></script>
+		<style>
+			table,li{
+				font: 85% "Lucida Grande", "Lucida Sans Unicode", "Trebuchet MS", sans-serif;
+				padding: 0;
+				margin: 0;
+				border-collapse: collapse;
+				color: #333;
+				background: #F3F5F7;
+			}
+			table a {
+				color: #3A4856;
+				text-decoration: none;
+				border-bottom: 1px solid #C6C8CB;
+			}
+			table a:visited {
+				color: #777;
+			}
+			table a:hover {
+				color: #000;
+			}
+			table caption {
+				text-align: left;
+				text-transform: uppercase;
+				padding-bottom: 10px;
+				font: 180% "Lucida Grande", "Lucida Sans Unicode", "Trebuchet MS", sans-serif;
+			}
+			table th {
+				background: #666666;
+				padding: 15px 10px;
+				color: #fff;
+				text-align: left;
+				font-weight: normal;
+				border-left: 1px solid #EAECEE;
+				border-bottom: 1px solid #EAECEE;
+				border-right: 1px solid #EAECEE;
+			}
+
+			table td {
+				padding: 2px;
+				text-align: central;
+			}
+
+			table tr {
+				background: #F3F5F7;
+			}
+			table tr.odd{
+				background: #F0F2F4;
+			}
+			table  tr:hover {
+				background: #EAECEE;
+				color: #111;
+			}
+
+			h3 {
+				padding: .2em;
+				margin: 0;
+			}
+			.feedContainer {
+				width: 500px;
+				margin-right: .2em;
+				float: left
+			}
+			.dataContainer {
+				float: left;
+			}
+			/* style the list to maximize the droppable hitarea */
+			.dataContainer ol {
+				margin: 0;
+				padding: 1em 0 1em 3em;
+			}
+			#dataTree {
+				list-style-type: none
+			}
+			#dataTree li {
+				margin: 0 3px 3px 3px;
+				padding: 0.4em;
+			}
+			.ui-widget-content {
+				border: 1px solid #AAA/*{borderColorContent}*/;
+				background: white/*{bgColorContent}*/ url(images/ui-bg_flat_75_ffffff_40x100.png)/*{bgImgUrlContent}*/ 50%/*{bgContentXPos}*/ 50%/*{bgContentYPos}*/ repeat-x/*{bgContentRepeat}*/;
+				color: #222/*{fcContent}*/;
+				margin-top:0;
+				margin-bottom:0;
+			}
+			
+			.ui-widget-header {
+				font-family: "Trebuchet MS", "Helvetica", "Arial", "Verdana", "sans-serif";
+				border: 1px solid #AAA/*{borderColorHeader}*/;
+				background: #ccc/*{bgColorHeader}*/ url(images/ui-bg_highlight-soft_75_cccccc_1x100.png)/*{bgImgUrlHeader}*/ 50%/*{bgHeaderXPos}*/ 50%/*{bgHeaderYPos}*/ repeat-x/*{bgHeaderRepeat}*/;
+				color: white/*{fcHeader}*/;
+				font-weight: bold;
+				margin-top:0;
+				margin-bottom:0;
+			}
+			
+			.ui-measure {
+				color:orange;
+			}
+			
+			select {
+				width : 150px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="settings" style="height:160px">
+			<div style="float:left">
+				<div style="float: left">
+					<label id="chartType">Chart Id</label>
+					<select id="chartIds" name="Chart Id"></select>
+				</div>
+				<div style="float: left">
+					<label>DataSets</label>
+					<select id="dataSets"></select>
+				</div>
+				<div>
+					<label>Template</label>
+					<select id="templates">
+						<option value="default" selected="selected">No template</option>
+						<option value="standard">Standard</option>
+						<option value="flashy">Flashy</option>
+					</select>
+				</div>
+				<table id= "feedTable" border="1" style="clear: both">
+					<tr>
+						<th>FeedId</th>
+						<th>FeedName</th>
+						<th>FeedType</th>
+						<th>Min</th>
+						<th>Max</th>
+						<th>AAIndex</th>
+						<th>MGIndex</th>
+						<th>AcceptMND</th>
+						<th>MaxStackedDims</th>
+					</tr>
+				</table>
+			</div>
+			<div id="dataDisplay" style="float:left">
+				<div style="float:left">
+					<div><label>CrossTable Dataset</label></div>
+					<textarea id="dataString" cols="35" rows="6"></textarea>
+				</div>
+				<div style="float:left">
+					<div><label>Feeding</label></div>
+					<textarea id="feedingString" cols="35" rows="6"></textarea>
+				</div>
+				<div style="float:left">
+					<div><label>Options</label></div>
+					<textarea id="optionsString" cols="20" rows="6"></textarea>
+				</div>
+				<input type="button" id="settingApply" style="clear:both" value="SettingApply..." onclick="applySettings()"/>
+				<input type="button" id="updataData" style="clear:both" value="UpdataData..." onclick="updataData()"/>
+			</div>
+		</div>
+		<div style="float:left">
+			<div style="float:left">
+				<div id="dataTable" style="overflow:scroll;width:680px;height:400px"></div>
+				<div id="FeedingPanel">
+					<div style="float:left">
+						<label>Feeding Status: </label>
+						<label id='feedingStatus' style="color:red">No Feeding</label>
+					</div>
+					<div style="clear:both">
+						<div class="feedContainer">
+							<h3 class="ui-widget-header">FeedContainer</h3>
+							<div id="Measures" style="float:left;width:160px">
+								<h4 class="ui-widget-header">Measures</h4>
+								<ul id="measureTree" class="ui-widget-content" ></ul>
+							</div>
+							<div id="Dimensions" style="float:left;width:160px">
+								<h4 class="ui-widget-header">Dimensions</h4>
+								<ul id="dimensionTree" class="ui-widget-content" ></ul>
+							</div>
+							<div id="Trillis" style="float:left;width:160px">
+							</div>
+						</div>
+						<div class="dataContainer">
+							<h3 class="ui-widget-header">DataContainer</h3>
+							<div class="ui-widget-content">
+								<div id="dataTree" class="dataTreeView" ></div>
+							</div>
+						</div>
+					</div>
+					<div style="clear:both">
+						<input id="ghostGen" type="checkbox" checked="checked" title="Generate ghost chart if feeding is uncomplete" onclick="feeding()"/>
+						<label>Generate ghost chart if feeding is uncomplete</label>
+					</div>
+				</div>
+			</div>
+			<div id="chart" style="background-color:white;float:left;width:950px;height:800px;postion:absolute;left:0px;bottom:0px"></div>
+		</div>
+	</body>
+</html>
+

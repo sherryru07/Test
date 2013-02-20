@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Geo Pie Chart</title>
+<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+<script type="text/javascript" src="../../../../libs/json2.js"></script>
+<script type="text/javascript" src="../../../../libs/rtree.js"></script>
+<script type="text/javascript" src="../../../../libs/simplify.js"></script>
+<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+<script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+</head>
+<body>
+	<div id="chart"
+		style="position: absolute; left: 50px; width: 90%; height: 90%; background-color: #ffffff"></div>
+	<!-- 
+		<div id="chart2" style="position:absolute; left: 50px; top: 650px;  width: 600px; height: 400px; background-color: #ffffff"></div>
+		 -->
+	<script type='text/javascript'>
+  $(function() {
+    var Environment = sap.viz.env;
+    var CrosstableDataset = sap.viz.data.CrosstableDataset;
+    var vizcore = sap.viz.core;
+    sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+    sap.viz.GeoManager.detailMapEnabled(true);
+    
+    Environment.initialize({
+      'log' : 'debug'
+    });
+
+    var chartOption = {
+        plotArea : {
+          'colorPalette' : d3.scale.category20().range()
+        },
+        title : {
+          // visible: true,
+            text : 'Geo Bubble Chart Sample'
+        }
+    };
+
+    var ds = new CrosstableDataset();
+    var navValues = [{ featureId: 'C21019301,NAVTEQ', name: 'New York' }, 
+                     { featureId: 'C21086811,NAVTEQ', name: 'Vancouver' }, 
+                     { featureId: 'C21155525,NAVTEQ', name: 'Montréal' }, 
+                     { featureId: 'C21156103,NAVTEQ', name: 'Ottawa' }, 
+                     { featureId: 'C21055407,NAVTEQ', name: 'Toronto' }, 
+                     { featureId: 'C23039216,NAVTEQ', name: 'Rio de Janeiro' }, 
+                     { featureId: 'C23380551,NAVTEQ', name: 'Санкт-Петербург' }, 
+                     { featureId: 'C20337455,NAVTEQ', name: 'London' }, 
+                     { latLong: [0, 0], name: 'Center' }
+                     ];
+
+    var values = [];
+    var infos = [];
+    var measures = [[],[],[]], min = 18, max = 150, v, setNull = false;
+    
+    $.each(navValues, function(i, v) {
+      values.push(v.name);
+      infos.push({ featureId: navValues[i].featureId, latLong: navValues[i].latLong });
+      
+      for (var ii = 0; ii < 3; ii++) {
+        v = Math.round(Math.random() * max);
+        if (v <= min) {
+          if (setNull) {
+            v = null;
+          } else {
+            v = 'invalid value';
+          }
+          
+          setNull = !setNull;
+        }
+        
+        measures[ii].push(v);
+      }
+  });
+    
+    /*
+        Geo data
+        AA 1: geo 
+        AA 2: overlay
+    */
+    ds.setData({
+      'analysisAxis':[{
+        'index' : 1,
+        'data' : [{
+          'type' : 'Dimension',
+          'name' : 'City',
+          'values' : values,
+          'infos' : infos
+        }]}, {
+          'index' : 2,
+          'data' : [{
+              'type' : 'Dimension',
+              'name' : 'Year',
+              'values' : [2000, 2001, 2002]
+        }]}],  
+        'measureValuesGroup':[ {
+          'index' : 1,
+          'data' : [{
+              'type' : 'Measure',
+              'name' : 'Number of Planes',
+              'values' : measures
+          }]
+      }]});
+    
+    var bar = vizcore.createViz({
+      type : 'viz/geopie',
+      data : ds,
+      container : $('#chart'),
+      options : chartOption
+    });
+    
+  });
+
+  </script>
+</body>
+</html>

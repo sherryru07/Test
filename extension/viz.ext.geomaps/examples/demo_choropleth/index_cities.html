@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Choropleth Chart</title>
+        <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+        <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+        <script type="text/javascript" src="../../../../libs/json2.js"></script>
+        <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        <script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+    </head>
+    <body>
+        <div id="chart" style="position:absolute; left: 50px; width: 90%; height: 90%; background-color: #ffffff"></div>
+
+        <script type='text/javascript'>
+            $(function() {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+                sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+
+                Environment.initialize({
+                    'log' : 'debug'
+                });
+
+                var chartOption = {
+                    choropleth: {
+                        startColor: 'rgb(239, 237, 245)',
+                        endColor: 'rgb(117, 107, 177)'
+                    },
+                    title : {
+                        visible: false,
+                        text : 'Choropleth Chart Sample'
+                    },
+                    legend : {
+                        isHierarchy : false,
+                        position : 'right',
+                        legendType : 'BubbleColorLegend'  //BubbleColorLegend
+                    }
+                };
+
+                var ds = new CrosstableDataset();
+
+                var navValues =[{"name":"Iqaluit","featureId":"C21168303,NAVTEQ"},{"name":"Burnaby","featureId":"C21086827,NAVTEQ"},{"name":"Oshawa","featureId":"C21055369,NAVTEQ"},{"name":"St John's","featureId":"C21169076,NAVTEQ"},{"name":"Trois-Rivieres","featureId":"C21161745,NAVTEQ"},{"name":"London","featureId":"C21085698,NAVTEQ"},{"name":"Kelowna","featureId":"C21161184,NAVTEQ"},{"name":"Halifax","featureId":"C21167826,NAVTEQ"},{"name":"Barrie","featureId":"C21085715,NAVTEQ"},{"name":"Lévis","featureId":"C21161918,NAVTEQ"},{"name":"Victoria","featureId":"C21160112,NAVTEQ"},{"name":"Kingston","featureId":"C21086267,NAVTEQ"},{"name":"Quebec","featureId":"C21162049,NAVTEQ"},{"name":"Richmond","featureId":"C21086939,NAVTEQ"},{"name":"Gatineau","featureId":"C21157598,NAVTEQ"}];
+
+                var values = [];
+                var infos = [];
+                var measures = [], min = 18, max = 150, v;
+
+                $.each(navValues, function(i, v) {
+                    values.push(v.name);
+                    infos.push({ featureId : v.featureId });
+                    v = Math.round(Math.random() * max);
+                    measures.push((v > min) ? v : null);
+                });
+
+                ds.setData({
+                    'analysisAxis':[{
+                        'index' : 1,
+                        'data' : [{
+                            'type' : 'GeoDimension',
+                            'name' : 'Region',
+                            'values' : values,
+                            'infos' : infos
+                        }]
+                    }],  
+                   'measureValuesGroup':[{
+                      'index' : 1,
+                      'data' : [{
+                          'type' : 'Measure',
+                          'name' : 'Number of Planes',
+                          'values' : [ measures ]
+                      }]
+                  }]});
+                
+                var bar = vizcore.createViz({
+                    type : 'viz/choropleth',
+                    data : ds,
+                    container : $('#chart'),
+                    options : chartOption
+                });
+                
+            });
+
+        </script>
+    </body>
+</html>

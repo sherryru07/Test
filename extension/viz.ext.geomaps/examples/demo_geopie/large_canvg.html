@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>>Geo Pie ChartChart</title>
+        <script type="text/javascript" src="../../../../libs/rgbcolor.js"></script>
+        <script type="text/javascript" src="../../../../libs/canvg.js"></script>
+        <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+        <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+        <script type="text/javascript" src="../../../../libs/json2.js"></script>
+        <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        <script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+        <script type="text/javascript" src="../../../../resources/config/config.js"></script>       
+    </head>
+    <body>
+        <div id="chart" style="position:absolute; left: 50px; width: 90%; height: 90%; background-color: #ffffff"></div>
+
+        <script type='text/javascript'>
+            d3.json('../resources/USA_and_world.json', function(navValues) {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+                sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+
+                Environment.initialize({
+                    'log' : 'debug'
+                });
+
+                var chartOption = {
+                    choropleth: {
+                        startColor: 'rgb(203, 201, 226)',
+                        endColor: 'rgb(84, 39, 143)'
+                    },
+                    plotArea: {
+                        animation : {
+                            dataLoading: false
+                        }
+                    },
+                    title : {
+                        visible: false,
+                        text : 'Choropleth Chart Sample'
+                    },
+                    legend : {
+                        isHierarchy : false,
+                        position : 'right',
+                        legendType : 'BubbleColorLegend'  //BubbleColorLegend
+                    }
+                };
+                
+                var ds = new CrosstableDataset();
+                var values = [];
+                var infos = [];
+                var measures = [[],[],[],[],[],[],[],[],[],[]], min = 18, max = 150, v, setNull = false;
+
+                var count = 0;
+                $.each(navValues, function(i, v) {
+                    count = count+1; 
+                    if (count <= 517) {
+                        values.push(v.name);
+                        infos.push({ featureId : v.featureId });
+                        for (var ii = 0; ii < measures.length; ii++) {
+                          v = Math.round(Math.random() * max);
+                          if (v <= min) {
+                            if (setNull) {
+                              v = null;
+                            } else {
+                              v = 'invalid value';
+                            }
+        
+                            setNull = !setNull;
+                            v=min;
+                          }        
+                          measures[ii].push(v);
+                        }
+                    }
+                });
+
+                ds.setData({
+                    'analysisAxis':[{
+                        'index' : 1,
+                        'data' : [{
+                            'type' : 'Dimension',
+                            'name' : 'Region',
+                            'values' : values,
+                            'infos' : infos
+                    }]}, {
+                        'index' : 2,
+                        'data' : [{
+                        'type' : 'Dimension',
+                        'name' : 'Year',
+                        'values' : [2000,2001,2002,2003,2004,2005,2006,2007,2008,2009]
+                    }]}],  
+                   'measureValuesGroup':[{
+                      'index' : 1,
+                      'data' : [{
+                          'type' : 'Measure',
+                          'name' : 'Number of Planes',
+                          'values' : measures
+                      }]
+                  }]});
+                
+                sap.viz.config.enableCanvg (true);
+                var bar = vizcore.createViz({
+                    type : 'viz/geopie',
+                    data : ds,
+                    container : $('#chart'),
+                    options : chartOption
+                });
+                
+            });
+
+        </script>
+    </body>
+</html>

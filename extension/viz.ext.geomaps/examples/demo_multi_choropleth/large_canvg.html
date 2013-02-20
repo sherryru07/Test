@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Viz Multi Choropleth Chart</title>
+        <script type="text/javascript" src="../../../../libs/rgbcolor.js"></script>
+        <script type="text/javascript" src="../../../../libs/canvg.js"></script>
+<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+<script type="text/javascript" src="../../../../libs/json2.js"></script>
+<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+<script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+        <script type="text/javascript" src="../../../../resources/config/config.js"></script>       
+
+</head>
+<body>
+    <div id="chart"
+        style="position:absolute; width: 90%; height: 90%; background-color: #ffffff"></div>
+    <script type='text/javascript'>
+    d3.json('../resources/USA_counties.json', function(navValues) {
+      var Environment = sap.viz.env;
+      var CrosstableDataset = sap.viz.data.CrosstableDataset;
+      var vizcore = sap.viz.core;
+      sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+
+      Environment.initialize({
+        'log' : 'debug'
+      });
+      var chartOption = {
+        title : {
+          text : 'Sample Multi Choropleth Chart Title'
+        }
+      };
+
+      var values = [];
+      var infos = [];
+      var measures = [], min = 18, max = 150, v;
+
+      $.each(navValues, function(i, v) {
+        values.push(v.name);
+        infos.push({ featureId : v.featureId });
+        
+        var measure = [];
+        for (var i = 0; i < 6; i++) {
+          v = Math.round(Math.random() * max);
+          measure.push((v > min) ? v : min);
+        }
+        measures.push(measure);
+      });
+      
+      var ds = new CrosstableDataset();
+      ds.setData({
+        'analysisAxis' : [
+            {
+              'index' : 1,
+              'data' : [
+                  {
+                    'type' : 'Dimension',
+                    'name' : 'Product',
+                    'values' : [ 'Car', 'Car', 'Truck', 'Truck', 'Motorcycle', 'Motorcycle']
+                  },
+                  {
+                    'type' : 'Dimension',
+                    'name' : 'Year',
+                    'values' : [ '2001', '2002', '2001', '2002', '2001', '2002']
+                  } ]
+            }, {
+              'index' : 2,
+              'data' : [ {
+                'type' : 'Dimension',
+                'name' : 'City',
+                'values' : values,
+                'infos' : infos
+              }]
+            } ],
+        'measureValuesGroup' : [ {
+          'index' : 1,
+          'data' : [ {
+            'type' : 'Measure',
+            'name' : 'Number of Planes',
+            'values' : measures
+          } ]
+        } ]
+      });
+      sap.viz.config.enableCanvg (true);
+
+      var bar = vizcore.createViz({
+        type : 'viz/multi_choropleth',
+        data : ds,
+        container : $('#chart'),
+        options : chartOption
+      });
+
+    });
+  </script>
+
+</body>
+</html>

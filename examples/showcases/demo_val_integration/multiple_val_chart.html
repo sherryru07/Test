@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../libs/sap.viz.js"></script>
+		<script type="text/javascript" src="libs/require.js"></script>
+		<script type="text/javascript" src="libs/val.js"></script>
+		<script type="text/javascript" src="libs/jslinq.js"></script>
+		<script type="text/javascript" src="libs/tb2ctb.js"></script>
+		<script type="text/javascript" src="valm.js"></script>
+		<script type="text/javascript" src="data.js"></script>
+	</head>
+
+	<body>
+		<div id="chart" style="width: 800px; height: 600px; background-color: #ffffff"></div>
+		<script type="text/javascript">
+			$(function() {
+				//Init some variable
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+				Environment.initialize({
+					'log' : 'debug'
+				});
+				
+				//Compose Multiple VAL Chart
+				var valConfig = {
+					id : 'val/mva',
+					name : 'Multiple VAL Chart',
+					modules : {
+						title : {
+							id : 'sap.viz.modules.title',
+							configure : {
+								propertyCategory : 'title'
+							}
+						},
+						main : {
+							id : 'sap.viz.modules.tablecontainer',
+							configure : {
+								propertyCategory : 'multiLayout'
+							},
+							modules : {
+								xAxis2 : {
+									id : 'sap.viz.modules.axis',
+									configure : {
+										'description' : 'Settings for the column axis of multiple charts.',
+										propertyCategory : 'columnAxis',
+										properties : {
+											title : {
+												visible : false
+											},
+											gridline : {
+												visible : true
+											},
+											color : '#d8d8d8',
+											type : 'category',
+											position : 'top'
+										},
+										propertiesOverride : {
+											label : {
+												isExported : false
+											},
+											axisline : {
+												isExported : false
+											}
+										}
+									}
+								},
+								yAxis : {
+									id : 'sap.viz.modules.axis',
+									configure : {
+										'description' : 'Settings for the row axis of multiple charts.',
+										propertyCategory : 'rowAxis',
+										properties : {
+											type : 'category',
+											position : 'left',
+											title : {
+												visible : false
+											},
+											color : '#d8d8d8',
+											gridline : {
+												visible : true
+											}
+										},
+										propertiesOverride : {
+											label : {
+												isExported : false
+											},
+											axisline : {
+												isExported : false
+											}
+										}
+									}
+								},
+								plot : {
+									id : 'sap.viz.modules.xycontainer',
+									modules : {
+										plot : {
+											id : 'sap.viz.modules.val',
+											configure : {
+												propertyCategory : 'val'
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					dependencies : {
+						attributes : [{
+							targetModule : 'main.xAxis2',
+							target : 'scale',
+							sourceModule : 'main',
+							source : 'xCategoryScale'
+						}, {
+							targetModule : 'main.yAxis',
+							target : 'scale',
+							sourceModule : 'main',
+							source : 'yCategoryScale'
+						}],
+						events : []
+					}
+				};
+
+				sap.viz.manifest.viz.register(valConfig);
+				
+				
+				//Build Cross Table from Table for CVOM Data => Crosstable Binding
+				var axis1Binding = [], axis2Binding = [], mgsBinding = [];
+				axis1Binding.push("COLOR");
+				axis1Binding.push("YEAR");
+				axis2Binding.push("PRODUCT");
+				axis2Binding.push("COUNTRY");
+				mgsBinding.push(["PROFIT", "REVENUE"]);
+
+				var r = table2Crosstable(tableData, axis1Binding, axis2Binding, mgsBinding);
+				
+				//Build Chart Option => VAL configuration
+				var chartOption = {
+					title : {
+						visible : true,
+						text : 'A Multiple VAL Chart'
+					},
+					val : {
+						viewMode : 'bar', //dot,text,bars,tile,lines,hex
+						markType : 'part-to-whole-cluster', //part-to-whole-stack,part-to-whole-cluster,distribution,part-to-whole-stack,comparison
+						fieldSpec : {
+							x : "REVENUE",
+							y : "PRODUCT",
+							value : "PRODUCT",
+							label : "COUNTRY",
+							color : "COUNTRY"
+						},
+						palette : ["#3a95b3", "#b6d949", "#fdd36c", "#f47958", "#a65084", "#0063b1", "#748cb2", "#9cc677", "#eacf5e", "#f9ad79", "#d16a7c", "#8873a2", "#0da841", "#fcb71d", "#f05620", "#b22d6e", "#3c368e", "#8fb2cf", "#95d4ab", "#eae98f", "#f9be92", "#ec9a99", "#bc98bd", "#1eb7b2", "#73c03c", "#f48323", "#eb271b", "#d9b5ca", "#aed1da", "#dfecb2", "#fcdab0", "#f5bcb4"]
+					}
+				};
+
+				var ds = new CrosstableDataset();
+				ds.setData(r);
+				var chart = vizcore.createViz({
+					type : 'val/mva',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+				
+				//Update the option => Incremental Change
+				chartOption = {
+					val : {
+						viewMode : 'text', //dot,text,bars,tiles,lines,hex
+						markType : 'comparison', //part-to-whole-stack,part-to-whole-cluster,distribution,part-to-whole-stack,comparison
+						fieldSpec : {
+							x : "PROFIT",
+							y : "REVENUE",
+							value : "COLOR",
+							label : "COLOR",
+							color : "COLOR"
+						},
+						palette : ["#3a95b3", "#b6d949", "#fdd36c", "#f47958", "#a65084", "#0063b1", "#748cb2", "#9cc677", "#eacf5e", "#f9ad79", "#d16a7c", "#8873a2", "#0da841", "#fcb71d", "#f05620", "#b22d6e", "#3c368e", "#8fb2cf", "#95d4ab", "#eae98f", "#f9be92", "#ec9a99", "#bc98bd", "#1eb7b2", "#73c03c", "#f48323", "#eb271b", "#d9b5ca", "#aed1da", "#dfecb2", "#fcdab0", "#f5bcb4"]
+					}
+				};
+
+				//chart.properties(chartOption);
+			})
+		</script>
+	</body>
+</html>

@@ -1,0 +1,27 @@
+{
+    "name": "viz.ext.predictive",
+    "version": "0.1.0",
+    "min-sdk-version": "4.0.0",
+    "charts": [{
+        "all": "libs/sap.viz.ext.pa-mini.js"
+    }, {
+        "all-debug": "libs/sap.viz.ext.pa.js"
+    }, {
+        "viz/ext/pa/pc": "libs/sap.viz.ext.pa.pc.js"
+    }, {
+        "viz/ext/pa/funnel": "libs/sap.viz.ext.pa.funnel.js"
+    }],
+	"icons": [{
+        "viz/ext/pa/pc": "res/pc.ico"
+    }, {
+        "viz/ext/pa/funnel": "res/funnel.ico"
+    }],
+	"deps":
+	[{
+		"sap.viz.core": 
+		{	src: "../../libs/sap.viz.js",
+			version: "4.0.0",
+			description: "CVOM HTML5 Visualization Core Chart Pack"
+		}
+	}]
+}

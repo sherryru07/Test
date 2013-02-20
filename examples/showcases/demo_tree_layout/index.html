@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+		<title>Tree Chart</title>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../libs/sap.viz.js"></script>
+		<script type="text/javascript" src="flare.js"></script>
+		<script type="text/javascript" src="tree.js"></script>
+		<script type="text/javascript" src="table2tree.js"></script>
+		<style type="text/css">
+		</style>
+	</head>
+	<body>
+		<div >
+			<label>Layout</label>
+			<select id="layoutType" name="Layout">
+				<option value='tree'>Tree</option>
+				<option value='force'>Force</option>
+				<option value='pack'>Pack</option>
+				<option value='cluster'>Cluster</option>
+			</select>
+		</div>
+		<div id="chart" style="width: 800px; height: 600px; background-color: #ffffff"></div>
+		<script type="text/javascript">
+			$(function() {
+
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+					title : {
+						visible : true,
+						text : 'A Tree Chart'
+					},
+					tree : {
+						layout : 'tree'
+					},
+				};
+
+				var ds = new CrosstableDataset();
+				ds.setData(data);
+				//console.log(table2tree(data));
+				var chart = vizcore.createViz({
+					type : 'riv/tree',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+
+				d3.select("#layoutType").on('change', function() {
+					var layout = $('#layoutType')[0].options[$('#layoutType')[0].selectedIndex].value;
+					chartOption.tree.layout = layout;
+					$('#chart').empty();
+					var chart = vizcore.createViz({
+						type : 'riv/tree',
+						data : ds,
+						container : $('#chart'),
+						options : chartOption
+					});
+				});
+			})
+		</script>
+	</body>
+</html>

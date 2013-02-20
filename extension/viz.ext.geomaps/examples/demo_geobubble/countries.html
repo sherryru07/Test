@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Geo Bubble Chart</title>
+        <script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+        <script type="text/javascript" src="../../../../libs/jquery.js"></script>
+        <script type="text/javascript" src="../../../../libs/json2.js"></script>
+        <script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+        <script type="text/javascript" src="../../../../extension/viz.ext.geomaps/libs/sap.viz.ext.geomaps.js"></script>
+    </head>
+    <body>
+        <div id="chart" style="position:absolute; left: 50px; width: 90%; height: 90%; background-color: #ffffff"></div>
+        <!-- 
+        <div id="chart2" style="position:absolute; left: 50px; top: 650px;  width: 600px; height: 400px; background-color: #ffffff"></div>
+         -->
+        <script type='text/javascript'>
+            $(function() {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+                
+                sap.viz.GeoManager.resourcePath('../../../../extension/viz.ext.geomaps/resources');
+
+                Environment.initialize({
+                    'log' : 'debug'
+                });
+
+                var chartOption = {
+                    title : {
+                      visible : true,
+                      text : 'Geo Bubble Chart Sample'
+                    }
+                };
+
+                var ds = new CrosstableDataset();
+
+                var navValues = [
+                                    { featureId: '21000001,NAVTEQ', name: 'United States' },
+                                    { featureId: '21041602,NAVTEQ', name: 'Canada' },
+                                    { featureId: '23028911,NAVTEQ', name: 'Brasil' },
+                                    { featureId: '22928332,NAVTEQ', name: 'China' },
+                                    { featureId: '20485579,NAVTEQ', name: 'Россия' },
+                                    { featureId: 'UK,NAVTEQ', name: 'United Kingdom' },
+                                    { featureId: '23060936,NAVTEQ', name: 'New Zealand' }
+                                ];
+
+                var values = [];
+                var infos = [];
+
+                var measures = [], min = 18, max = 150, v, setNull = false;
+
+                $.each(navValues, function(i, v) {
+                  values.push(v.name);
+                  infos.push({ featureId: navValues[i].featureId, latLong: navValues[i].latLong });
+                  
+                  v = Math.round(Math.random() * max);
+                  if (v <= min) {
+                    if (setNull) {
+                      v = null;
+                    } else {
+                      v = 'invalid value';
+                    }
+                    
+                    setNull = !setNull;
+                  }
+                  measures.push(v);
+                });
+                
+                ds.setData({
+                  'analysisAxis':[{
+                    'index' : 1,
+                    'data' : [{
+                        'type' : 'Dimension',
+                        'name' : 'Region',
+                        'values' : values,
+                        'infos' : infos
+                    }]
+                  }],  
+                  'measureValuesGroup':[{
+                    'index' : 1,
+                    'data' : [{
+                        'type' : 'Measure',
+                        'name' : 'Number of Planes',
+                        'values' : [ measures ]
+                    }]
+                  }]});
+            
+                var bar = vizcore.createViz({
+                    type : 'viz/geobubble',
+                    data : ds,
+                    container : $('#chart'),
+                    options : chartOption
+                });
+            });
+
+        </script>
+    </body>
+</html>

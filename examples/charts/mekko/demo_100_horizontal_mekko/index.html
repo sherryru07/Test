@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Viz Stacked Bar Chart</title>
+		<script type="text/javascript" src="../../../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.common.globalization.js"></script>
+		<script type="text/javascript" src="../../../../libs/sap.viz.js"></script>
+				
+	</head>
+	<body>
+		<div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+		<button id="turnToPercentage" >turnToPercentage</button>
+		<button id="turnToComparison" >turnToComparison</button>
+		<script type='text/javascript'>
+		$(function() {
+		     Environment = sap.viz.env;
+		     CrosstableDataset = sap.viz.data.CrosstableDataset;
+		     vizcore = sap.viz.core;
+		    
+		    Environment.initialize({
+		        'log': 'debug'
+		    });
+		    
+		     chartOption = {
+		    	plotArea: {
+		        //'colorPallet' : ["#D9B5CA", "#AED1DA", "#DFECB2", "#FCDAB0", "#F5BCB4"]
+		        },
+		        title: {
+		          visible : true,
+		          text: 'Sample Mekko Chart Title'
+		        }
+		    };
+		    
+		     ds = new CrosstableDataset();
+		    ds.setData( {
+            'analysisAxis':	[                 
+            {
+                'index': 1,
+                'data': [{
+                        'type': 'Dimension',
+                        'name': 'Product',
+                        'values': ['Car', 'Truck', 'Motorcycle', 'Bicycle']
+                    }]
+            }, {
+                'index': 2,
+                'data': [{
+                        'type': 'Dimension',
+                        'name': 'Country',
+                        'values': ['China', 'USA']
+                    }]
+            }],
+            'measureValuesGroup' :[
+                {
+                'index': 1,
+                'data': [{
+                        'type': 'Measure',
+                        'name': 'Profit',
+                        'values': [[25, 236, 23, 116], [58, 128, 43, 73]]
+                    }]
+                },{
+                "index":2,
+                "data":[{
+                		'type':'Measure',
+                		"name":"REVENUE",
+                		"values":[[252,124,110,80],[370,170,220,100]]
+                }]
+              }]
+                    	
+                    
+            });
+
+		    //TODO How to define feeding API?
+		    //var bar = new HtmlViz('viz/stacked_bar', $('#chart'), chartOption, ds);
+		    bar = vizcore.createViz({
+		        type: 'viz/100_horizontal_mekko',
+		        data: ds,
+		        container: $('#chart'),
+		        options: chartOption
+		    });
+
+		});
+		$('#turnToPercentage').click(function(){
+					chartOption = {
+		    	plotArea: {
+		    		mode: "percentage"
+		        //'colorPallet' : ["#D9B5CA", "#AED1DA", "#DFECB2", "#FCDAB0", "#F5BCB4"]
+		        },
+		        title: {
+		          visible : true,
+		          text: 'Sample Mekko Chart Title'
+		        }
+		    };
+		    bar.properties(chartOption);
+		})
+		$('#turnToComparison').click(function(){
+					chartOption = {
+		    	plotArea: {
+		    		mode: "comparison"
+		        //'colorPallet' : ["#D9B5CA", "#AED1DA", "#DFECB2", "#FCDAB0", "#F5BCB4"]
+		        },
+		        title: {
+		          visible : true,
+		          text: 'Sample Mekko Chart Title'
+		        }
+		    };
+		    bar.properties(chartOption);
+		})
+		</script>
+	
+	</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <link rel="stylesheet" href="css/impressive.css"/>
+    <script type="text/javascript" src="libs/d3.v2.js"></script>
+    <script type="text/javascript" src="libs/jquery.js"></script>
+    <script type="text/javascript" src="libs/json2.js"></script>
+    <script type="text/javascript" src="libs/sap.viz.js"></script>
+    <!--<script src="js/jquery.js"> </script>-->
+    <title></title>
+</head>
+<body>
+<div id="impress" class="impress-not-supported">
+    <div id="comparison" class="step" data-x="1100" data-y="1200" data-scale="1.8" data-rotate="190">
+        <p>Advantage: <br /> Disadvantage: </p>
+        <img src="" />
+    </div>
+
+    <div id="pie" class="step" data-x="-300" data-y="600" data-scale="0.2" data-rotate="270">
+        <div id="chart1" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+        <script type='text/javascript'>
+            $(function () {
+                var Environment = sap.viz.env;
+                var CrosstableDataset = sap.viz.data.CrosstableDataset;
+                var vizcore = sap.viz.core;
+
+                Environment.initialize({
+                    'log':'debug'
+                });
+
+                var chartOption = {
+                    title:{
+                        visible:true,
+                        text:'Chart Title'
+                    }
+                };
+
+                var ds = new CrosstableDataset();
+                ds.setData({'analysisAxis':[
+                    {
+                        'index':1,
+                        'data':[
+                            {
+                                'type':'Dimension',
+                                'name':'Country',
+                                'values':['China', 'China', 'USA', 'USA', 'Canada', 'Canada']
+                            },
+                            {
+                                'type':'Dimension',
+                                'name':'Year',
+                                'values':['2001', '2002', '2001', '2002', '2001', '2002']
+                            }
+                        ]
+                    }
+                ], 'measureValuesGroup':[
+                    {
+                        'index':1,
+                        'data':[
+                            {
+                                'type':'Measure',
+                                'name':'Profit',
+                                'values':[
+                                    [25, 58, 58, 159, 149, 38]
+                                ]
+                            }
+                        ]
+                    }
+                ]});
+
+                var tagcloud = vizcore.createViz({
+                    type:'viz/donut',
+                    data:ds,
+                    container:$('#chart1'),
+                    options:chartOption
+                });
+            });
+
+        </script>
+    </div>
+
+<div id="revenue" class="step"  data-x="-1200" data-y="1000" data-scale="0.8" data-rotate="270">
+    <div id="chart" style="width: 600px; height: 400px; background-color: #ffffff"></div>
+    <script type='text/javascript'>
+        $(function() {
+            var Environment = sap.viz.env;
+            var CrosstableDataset = sap.viz.data.CrosstableDataset;
+            var vizcore = sap.viz.core;
+
+            Environment.initialize({
+                'log': 'debug'
+            });
+
+            var chartOption = {
+                plotArea: {
+                    //'colorPallet' : ["#D9B5CA", "#AED1DA", "#DFECB2", "#FCDAB0", "#F5BCB4"]
+                },
+                title: {
+                    visible : true,
+                    text: 'Sample Stacked Vertical Bar Chart Title'
+                }
+            };
+
+            var ds = new CrosstableDataset();
+            ds.setData( {
+                'analysisAxis':	[
+                    {
+                        'index': 1,
+                        'data': [{
+                            'type': 'Dimension',
+                            'name': 'Product',
+                            'values': ['Car', 'Truck', 'Motorcycle', 'Bicycle']
+                        }]
+                    }, {
+                        'index': 2,
+                        'data': [{
+                            'type': 'Dimension',
+                            'name': 'Country',
+                            'values': ['China', 'USA']
+                        }, {
+                            'type': 'Dimension',
+                            'name': 'Year',
+                            'values': ['2001', '2001']
+                        }]
+                    }],
+                'measureValuesGroup' :[{
+                    'index': 1,
+                    'data': [{
+                        'type': 'Measure',
+                        'name': 'Profit',
+                        'values': [[25, 236, 23, 116], [58, 128, 43, 73]]
+                    }, {
+                        'type': 'Measure',
+                        'name': 'Revenue',
+                        //'values' : [[50,236, 43, 126], [158, 228, 143, 143], [158, 64, 84, 143], [259, 347,390, 390], [249, 369, 532, 112], [318, 197,62,156]]
+                        'values': [[50, 86, 43, 146], [158, 88, 143, 183]]
+                    }]
+                }]});
+            var bar = vizcore.createViz({
+                type: 'viz/stacked_column',
+                data: ds,
+                container: $('#chart'),
+                options: chartOption
+            });
+
+        });
+
+    </script>
+    </div>
+
+</div>
+
+
+<a id="arrowLeft" class="arrow"></a>
+<a id="arrowRight" class="arrow"></a>
+
+<!-- JavaScript includes -->
+<!--<script src="js/jquery"></script>-->
+<script src="js/impress.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

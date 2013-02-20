@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src="../../libs/d3.v2.js"></script>
+		<script type="text/javascript" src="../../libs/jquery.js"></script>
+		<script type="text/javascript" src="../../libs/json2.js"></script>
+		<script type="text/javascript" src="../../libs/sap.viz.js"></script>
+		<script type="text/javascript" src="libs/require.js"></script>
+		<script type="text/javascript" src="libs/val.js"></script>
+		<script type="text/javascript" src="valm.js"></script>
+	</head>
+
+	<body>
+		<div id="chart" style="width: 800px; height: 600px; background-color: #ffffff"></div>
+		<script type="text/javascript">
+			$(function() {
+				var valConfig = {
+					id : 'val/va',
+					name : 'VAL Chart',
+					modules : {
+						title : {
+							id : 'sap.viz.modules.title',
+							configure : {
+								propertyCategory : 'title'
+							}
+						},
+						main : {
+							id : 'sap.viz.modules.xycontainer',
+							modules : {
+								plot : {
+									id : 'sap.viz.modules.val',
+									configure : {
+										propertyCategory : 'val'
+									}
+								}
+							}
+						}
+					},
+					dependencies : {
+						attributes : [],
+						events : []
+					}
+				};
+
+				sap.viz.manifest.viz.register(valConfig);
+
+				var Environment = sap.viz.env;
+				var CrosstableDataset = sap.viz.data.CrosstableDataset;
+				var vizcore = sap.viz.core;
+				Environment.initialize({
+					'log' : 'debug'
+				});
+
+				var chartOption = {
+					title : {
+						visible : true,
+						text : 'A VAL Chart'
+					},
+					val : {
+						viewMode : 'bar', //dot,text,bars,tiles,lines,hex
+						markType : 'part-to-whole-cluster', //part-to-whole-stack,part-to-whole-cluster,distribution,part-to-whole-stack,comparison
+						fieldSpec : {
+							x : "COUNTRY",
+							y : "REVENUE",
+							value : "REVENUE",
+							label : "PRODUCT",
+							color : "PRODUCT",
+							id : "id"
+						},
+						palette : ["#3a95b3", "#b6d949", "#fdd36c", "#f47958", "#a65084", "#0063b1", "#748cb2", "#9cc677", "#eacf5e", "#f9ad79", "#d16a7c", "#8873a2", "#0da841", "#fcb71d", "#f05620", "#b22d6e", "#3c368e", "#8fb2cf", "#95d4ab", "#eae98f", "#f9be92", "#ec9a99", "#bc98bd", "#1eb7b2", "#73c03c", "#f48323", "#eb271b", "#d9b5ca", "#aed1da", "#dfecb2", "#fcdab0", "#f5bcb4"]
+					}
+				};
+				var data = {
+					"analysisAxis" : [{
+						"index" : 1,
+						"data" : [{
+							"type" : "Dimension",
+							"name" : "COUNTRY",
+							"values" : ["France", "France", "France", "France", "France", "France", "France", "France", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Germany", "Spain", "Spain", "Spain", "Spain", "Spain", "Spain", "Spain", "Spain", "USA", "USA", "USA", "USA", "USA", "USA", "USA", "USA"]
+						}, {
+							"type" : "Dimension",
+							"name" : "COLOR",
+							"values" : ["Black", "Black", "Black", "Black", "Red", "Red", "Red", "Red", "Black", "Black", "Black", "Black", "Red", "Red", "Red", "Red", "Black", "Black", "Black", "Black", "Red", "Red", "Red", "Red", "Black", "Black", "Black", "Black", "Red", "Red", "Red", "Red"]
+						}, {
+							"type" : "Dimension",
+							"name" : "PRODUCT",
+							"values" : ["Car", "Car", "Truck", "Truck", "Car", "Car", "Truck", "Truck", "Car", "Car", "Truck", "Truck", "Car", "Car", "Truck", "Truck", "Car", "Car", "Truck", "Truck", "Car", "Car", "Truck", "Truck", "Car", "Car", "Truck", "Truck", "Car", "Car", "Truck", "Truck"]
+						}, {
+							"type" : "Dimension",
+							"name" : "YEAR",
+							"values" : ["2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007", "2006", "2007"]
+						}]
+					}],
+					"measureValuesGroup" : [{
+						"index" : 1,
+						"data" : [{
+							"type" : "Measure",
+							"name" : "PROFIT",
+							"values" : [[6, 2, 6, 2, 5, 2, 5, 2, 3, 2, 3, 2, 5, 6, 5, 6, 1, 3, 1, 3, 2, 3, 2, 3, 8, 7, 8, 7, 3, 8, 3, 8]]
+						}, {
+							"type" : "Measure",
+							"name" : "REVENUE",
+							"values" : [[10, 15, 10, 15, 20, 18, 20, 18, 7, 11, 7, 11, 25, 25, 25, 25, 2, 5, 2, 5, 10, 5, 10, 5, 12, 13, 12, 13, 30, 40, 30, 40]]
+						}]
+					}]
+				}
+
+				var ds = new CrosstableDataset();
+				ds.setData(data);
+				var chart = vizcore.createViz({
+					type : 'val/va',
+					data : ds,
+					container : $('#chart'),
+					options : chartOption
+				});
+
+				chartOption = {
+					val : {
+						viewMode : 'dot', //dot,text,bars,tiles,lines,hex
+						markType : 'comparison', //part-to-whole-stack,part-to-whole-cluster,distribution,part-to-whole-stack,comparison
+						fieldSpec : {
+							x : "COUNTRY",
+							y : "REVENUE",
+							value : "REVENUE",
+							label : "PRODUCT",
+							color : "PRODUCT"
+						},
+						palette : ["#3a95b3", "#b6d949", "#fdd36c", "#f47958", "#a65084", "#0063b1", "#748cb2", "#9cc677", "#eacf5e", "#f9ad79", "#d16a7c", "#8873a2", "#0da841", "#fcb71d", "#f05620", "#b22d6e", "#3c368e", "#8fb2cf", "#95d4ab", "#eae98f", "#f9be92", "#ec9a99", "#bc98bd", "#1eb7b2", "#73c03c", "#f48323", "#eb271b", "#d9b5ca", "#aed1da", "#dfecb2", "#fcdab0", "#f5bcb4"]
+					}
+				};
+
+				//chart.properties(chartOption);
+			})
+		</script>
+	</body>
+</html>
